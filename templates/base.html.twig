@@ -5,6 +5,7 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
+         {{ importmap('app') }}
         {% endblock %}
 
         {% block javascripts %}
@@ -18,7 +19,61 @@
         <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="bg-white">
+        <nav class="bg-brand  ">
+            <div class="max-w-8xl mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+
+                    {# Logo / nom app #}
+                    <div class="flex items-center">
+                        <a href="" class="text-xl font-bold text-black-600">
+                            Facturation
+                        </a>
+                    </div>
+
+                    {# Liens de navigation #}
+                    <div class="hidden md:flex items-center gap-6">
+                        <a href=""
+                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                            Dashboard
+                        </a>
+                        <a href="{{ path('client.index') }}"
+                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                            Clients
+                        </a>
+                        <a href=""
+                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                            Devis
+                        </a>
+                        <a href=""
+                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                            Factures
+                        </a>
+                    </div>
+
+            {# Zone utilisateur / déconnexion #}
+                    <div class="flex items-center gap-4">
+                        {% if app.user %}
+                            <span class="text-sm text-gray-500">{{ app.user.username }}</span>
+                            <a href=" {{ path('app_logout') }}"
+                            class="px-3 py-1.5 text-sm text-white bg-red-500 hover:bg-red-600 rounded transition-colors">
+                                Déconnexion
+                            </a>
+                        {% else %}
+                            <a href=" {{ path('app_login') }}"
+                            class="px-3 py-1.5 text-sm text-white bg-green-600 hover:bg-blue-700 rounded transition-colors">
+                                Connexion
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+        <div  class="container mx-auto px-4">
+              {% include 'partials/flash.html.twig' %}
+            {% block body %}{% endblock %}
+        </div>
+       
     </body>
 </html>

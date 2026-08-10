@@ -1,3 +1,17 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+@source "../../templates";
+
+
+@theme {
+  --color-brand: #f6f6f6;
+  --color-brand-light: #334155;
+  --animate-fade-out: fadeOut 0.5s ease-in 2s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+        pointer-events: none;
+    }
 }
