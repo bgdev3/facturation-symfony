@@ -17,9 +17,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ClientController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(ClientRepository $repo): Response
+    public function index(Request $request, ClientRepository $repo): Response
     {
-        $clients = $repo->findBy(['user' => $this->getUser()]);
+        // $clients = $repo->findBy(['user' => $this->getUser()]);
+        $page = $request->query->getInt('page', 1);
+        $clients = $repo->paginationClient($page);
         return $this->render('client/index.html.twig', ['clients' => $clients]);
     }
 
