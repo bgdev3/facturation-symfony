@@ -9,6 +9,33 @@
 
    <div class="max-w-2xl mx-auto">
     <h1 class="text-center text-xl font-bold mt-6"> Enregistrement</h1>
-   {{form(registrationForm)}}
+
+   {{form_start(registrationForm)}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <fieldset class="bg-teal-300 rounded-lg p-4 mb-6">
+        <legend class="text-sm font-bold px-2">Informations personnelles</legend>
+        {{form_row(registrationForm.username)}}
+        {{form_row(registrationForm.email)}}
+        {{form_row(registrationForm.plainPassword)}}
+    </fieldset>
+
+     <fieldset class="bg-teal-300 rounded-lg p-4 mb-6">
+        <legend class="text-sm font-bold px-2">Informations Entreprise</legend>
+        {{form_row(registrationForm.company.logo)}}
+        {{form_row(registrationForm.company.name)}}
+        {{form_row(registrationForm.company.siret)}}
+        {{form_row(registrationForm.company.address)}}
+        {{form_row(registrationForm.company.postalCode)}}
+        {{form_row(registrationForm.company.city)}}
+        {{form_row(registrationForm.company.tvaIntraCom)}}
+    </fieldset>
+</div>
+      <fieldset class="bg-teal-300 rounded-lg p-4 mb-6">
+        <legend class="text-sm font-bold px-2">Informations Banque</legend>
+        {{form_row(registrationForm.company.iban)}}
+        {{form_row(registrationForm.company.bic)}}
+    </fieldset>
+    {{form_end(registrationForm)}}
+
 </div>
 {% endblock %}
