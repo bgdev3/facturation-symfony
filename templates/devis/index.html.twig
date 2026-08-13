@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis index{% endblock %}
+
+{% block body %}
+    <h1 class="text-center font-bold text-xl mt-6">Liste devis</h1>
+    <a href="{{ path('devis.create') }}" class="px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark hover:bg-green-100 transition-colors">Nouveau devis</a>
+<div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm mt-6"></div>
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+            <tr>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Numero</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DateEmission</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DateValidite</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">MontantHT</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">MontantTVA</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">MontantTTC</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        {% for devis in devis %}
+            <tr>
+                <td>{{ devi.id }}</td>
+                <td>{{ devi.numero }}</td>
+                <td>{{ devi.dateEmission ? devi.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.dateValidite ? devi.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.statut }}</td>
+                <td>{{ devi.montantHT }}</td>
+                <td>{{ devi.montantTVA }}</td>
+                <td>{{ devi.montantTTC }}</td>
+                <td>
+                    <a href="{{ path('devis.show', {'id': devi.id}) }}">show</a>
+                    <a href="{{ path('devis.edit', {'id': devi.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr class="text-center">
+                <td colspan="9">Auncun devis trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+ 
+{% endblock %}
