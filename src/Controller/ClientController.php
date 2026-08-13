@@ -71,10 +71,12 @@ final class ClientController extends AbstractController
 
     #[Route('/delete/{id}', name: 'delete', requirements:['id' => Requirement::DIGITS])]
     #[IsGranted('DELETE',  subject: 'client')]
-    public function delete(Client $client, EntityManagerInterface $em): Response
+    public function delete(Request $request, Client $client, EntityManagerInterface $em): Response
     {
+         if ($this->isCsrfTokenValid('delete'.$client->getId(), $request->getPayload()->getString('_token'))) {
             $em->remove($client);
             $em->flush();
+         }
 
             $this->addFlash('success', 'Client supprimée.');
            return $this->redirectToRoute('client.index');
