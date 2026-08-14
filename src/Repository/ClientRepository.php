@@ -25,7 +25,7 @@ class ClientRepository extends ServiceEntityRepository
         return $this->paginator->paginate(
             $builder,
             $page,
-            2, [
+            5, [
                     'distinct' => true,
                     'sortFieldAllowList' => ['r.id', 'r.title'],
                 ]
