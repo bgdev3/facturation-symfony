@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Facture{% endblock %}
+
+{% block body %}
+    <h1  class="text-center text-xl font-bold mb-6 mt-6">Nouvelle facture</h1>
+
+    <div class=" max-w-2xl mx-auto">
+        {{ include('facture/_form.html.twig') }}
+    </div>
+
+    <a href="{{ path('facture.index') }}" class="block mx-auto w-48 border-transparent bg-green-300 text-center text-dark hover:bg-green-100 font-small py-1.5 rounded transition-colors mt-2">back to list</a>
+{% endblock %}

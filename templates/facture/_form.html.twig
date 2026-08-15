@@ -1,0 +1,43 @@
+{{ form_start(form) }}
+    {{ form_row(form.numero) }}
+    {{ form_row(form.dateEmission) }}
+    {{ form_row(form.dateEcheance) }}
+    {{ form_row(form.statut) }}
+    {{ form_row(form.client) }}
+    {{ form_row(form.devis) }}
+    {{ form_row(form.montantHT) }}
+    {{ form_row(form.montantTVA) }}
+    {{ form_row(form.montantTTC) }}
+    {{ form_row(form.conditionsPaiement) }}
+
+    <div data-controller="ligne-facture" 
+         data-ligne-facture-index-value="{{ form.ligneFactures|length }}">
+
+        {% set removeButtonHtml %}
+        <div class="flex justify-center">
+             <button type="button" data-action="ligne-facture#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+        </div>
+           
+        {% endset %}
+
+        <div data-ligne-facture-target="list"
+            data-prototype="{{ form_widget(form.ligneFactures.vars.prototype)|e('html_attr') }}"
+            data-remove-button="{{ removeButtonHtml|e('html_attr') }}">
+            
+            {% for ligneDevisForm in form.ligneFactures %}
+                <div class="ligne-facture-item flex items-center justify-between gap-3">
+                    <div class="flex-1">
+                        {{ form_widget(ligneDevisForm) }}
+                    </div>
+                    <button type="button" data-action="ligne-facture#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-center mt-2 mb-2">
+            <button type="button" data-action="ligne-facture#add" class="w-8 h-8 flex items-center justify-center bg-green-300 rounded-full text-dark hover:bg-green-100 transition-colors">+</button>
+        </div>
+    </div>
+
+    <button class="block mx-auto w-48 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded transition-colors">{{ button_label|default('Save') }}</button>
+{{ form_end(form, {render_rest: false}) }}

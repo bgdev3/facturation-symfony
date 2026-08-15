@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture index{% endblock %}
+
+{% block body %}
+    <h1 class="text-center font-bold text-xl mt-6">Facture index</h1>
+    <a href="{{ path('facture.new') }}" class="px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark hover:bg-green-100 transition-colors">Créer facture</a>
+    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm mt-6"></div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              
+                    {% set colonnes = [
+                        'Id',
+                        'Numero',
+                        'Dete Emission', 
+                        'Date Echeance',
+                        'Statut',
+                        'Montant HT',
+                        'Montant TV',
+                        'Montant TTC',
+                        'Conditions Paiments',
+                        'actions'
+                    ] %}
+
+                {% for colonne in colonnes %}
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ colonne }}
+                    </th>
+                {% endfor %}
+
+            </thead>
+            <tbody>
+            {% for facture in factures %}
+                <tr>
+                    <td>{{ facture.id }}</td>
+                    <td>{{ facture.numero }}</td>
+                    <td>{{ facture.deteEmission ? facture.deteEmission|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ facture.dateEcheance ? facture.dateEcheance|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ facture.statut }}</td>
+                    <td>{{ facture.montantHT }}</td>
+                    <td>{{ facture.montantTVA }}</td>
+                    <td>{{ facture.montantTTC }}</td>
+                    <td>{{ facture.conditionsPaiment }}</td>
+                    <td>
+                        <a href="{{ path('facture.show', {'id': facture.id}) }}">show</a>
+                        <a href="{{ path('facture.edit', {'id': facture.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="text-center">
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
