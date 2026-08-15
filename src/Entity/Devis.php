@@ -68,9 +68,16 @@ class Devis
     #[ORM\OneToMany(targetEntity: LigneDevis::class, mappedBy: 'devis')]
     private Collection $ligneDevis;
 
+    /**
+     * @var Collection<int, Facture>
+     */
+    #[ORM\OneToMany(targetEntity: Facture::class, mappedBy: 'devis')]
+    private Collection $factures;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
+        $this->factures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,6 +205,36 @@ class Devis
             // set the owning side to null (unless already changed)
             if ($ligneDevi->getDevis() === $this) {
                 $ligneDevi->setDevis(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Facture>
+     */
+    public function getFactures(): Collection
+    {
+        return $this->factures;
+    }
+
+    public function addFacture(Facture $facture): static
+    {
+        if (!$this->factures->contains($facture)) {
+            $this->factures->add($facture);
+            $facture->setDevis($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFacture(Facture $facture): static
+    {
+        if ($this->factures->removeElement($facture)) {
+            // set the owning side to null (unless already changed)
+            if ($facture->getDevis() === $this) {
+                $facture->setDevis(null);
             }
         }
 

@@ -14,7 +14,7 @@ export default class extends Controller {
 
         const newItem = document.createElement('div');
         newItem.classList.add('ligne-devis-item');
-        newItem.innerHTML = prototype + removeButton;
+        newItem.innerHTML = removeButton + prototype;
 
         this.listTarget.appendChild(newItem);
         this.index++;

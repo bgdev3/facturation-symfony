@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\LigneDevis;
-use App\Form\LigneDevis1Type;
+use App\Form\LigneDevisType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ final class LigneDevisController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $ligneDevis = new LigneDevis();
-        $form = $this->createForm(LigneDevis1Type::class, $ligneDevis);
+        $form = $this->createForm(LigneDevisType::class, $ligneDevis);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -34,7 +34,7 @@ final class LigneDevisController extends AbstractController
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, LigneDevis $ligneDevis, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(LigneDevis1Type::class, $ligneDevis);
+        $form = $this->createForm(LigneDevisType::class, $ligneDevis);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -36,7 +36,7 @@ class DevisType extends AbstractType
             ->add('statut', EnumType::class, [
                 'label' => 'Statut',
                 'class'=> DevisStatut::class,
-                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
+                'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
             
             ->add('montantHT', TextType::class,[

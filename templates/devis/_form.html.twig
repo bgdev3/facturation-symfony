@@ -12,7 +12,10 @@
          data-ligne-devis-index-value="{{ form.ligneDevis|length }}">
 
         {% set removeButtonHtml %}
-            <button type="button" data-action="ligne-devis#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+        <div class="flex justify-center">
+             <button type="button" data-action="ligne-devis#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+        </div>
+           
         {% endset %}
 
         <div data-ligne-devis-target="list"
@@ -29,7 +32,7 @@
             {% endfor %}
         </div>
 
-        <div class="flex justify-end mt-2">
+        <div class="flex justify-center mt-2 mb-2">
             <button type="button" data-action="ligne-devis#add" class="w-8 h-8 flex items-center justify-center bg-green-300 rounded-full text-dark hover:bg-green-100 transition-colors">+</button>
         </div>
     </div>
