@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Repository\FactureRepository;
+
 class NumberInvoiceGenerator
 {
-    public function __construct(private /*FactureRepository*/ $repo) {}
+    public function __construct(private FactureRepository $repo) {}
 
     public function generate(): string
     {
