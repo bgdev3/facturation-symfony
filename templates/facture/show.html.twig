@@ -3,52 +3,83 @@
 {% block title %}Facture{% endblock %}
 
 {% block body %}
-    <h1>Facture</h1>
+    <h1>Facture {{ facture.numero }}</h1>
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ facture.id }}</td>
-            </tr>
-            <tr>
-                <th>Numero</th>
-                <td>{{ facture.numero }}</td>
-            </tr>
-            <tr>
-                <th>DeteEmission</th>
-                <td>{{ facture.deteEmission ? facture.deteEmission|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateEcheance</th>
-                <td>{{ facture.dateEcheance ? facture.dateEcheance|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ facture.statut }}</td>
-            </tr>
-            <tr>
-                <th>MontantHT</th>
-                <td>{{ facture.montantHT }}</td>
-            </tr>
-            <tr>
-                <th>MontantTVA</th>
-                <td>{{ facture.montantTVA }}</td>
-            </tr>
-            <tr>
-                <th>MontantTTC</th>
-                <td>{{ facture.montantTTC }}</td>
-            </tr>
-            <tr>
-                <th>ConditionsPaiment</th>
-                <td>{{ facture.conditionsPaiment }}</td>
-            </tr>
+            <tr><th>Id</th><td>{{ facture.id }}</td></tr>
+            <tr><th>Numero</th><td>{{ facture.numero }}</td></tr>
+            <tr><th>Date émission</th><td>{{ facture.deteEmission ? facture.deteEmission|date('d/m/Y') : '' }}</td></tr>
+            <tr><th>Date échéance</th><td>{{ facture.dateEcheance ? facture.dateEcheance|date('d/m/Y') : '' }}</td></tr>
+            <tr><th>Statut</th><td>{{ facture.statut }}</td></tr>
+            <tr><th>Montant HT</th><td>{{ facture.montantHT }}</td></tr>
+            <tr><th>Montant TVA</th><td>{{ facture.montantTVA }}</td></tr>
+            <tr><th>Montant TTC</th><td>{{ facture.montantTTC }}</td></tr>
+            <tr><th>Conditions paiement</th><td>{{ facture.conditionsPaiment }}</td></tr>
         </tbody>
     </table>
 
+    <h2>Lignes</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ligne in facture.ligneFactures %}
+            <tr>
+                <td>{{ ligne.designation }}</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.prixUnitaire }}</td>
+                <td>{{ ligne.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Paiements</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Moyen</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paiement in facture.paiements %}
+            <tr>
+                <td>{{ paiement.date|date('d/m/Y') }}</td>
+                <td>{{ paiement.montant }} €</td>
+                <td>{{ paiement.moyen }}</td>
+                <td>
+                    <form method="post" action="{{ path('paiement_delete', {id: paiement.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ paiement.id) }}">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        Total payé : {{ facture.totalPaye }} €<br>
+        Reste à payer : {{ facture.resteAPayer }} €
+    </p>
+
+    <h3>Ajouter un paiement</h3>
+    {{ form_start(paiementForm, {'action': path('paiement_new', {id: facture.id})}) }}
+        {{ form_widget(paiementForm) }}
+        <button type="submit">Enregistrer le paiement</button>
+    {{ form_end(paiementForm) }}
+
     <a href="{{ path('facture.index') }}">back to list</a>
-
     <a href="{{ path('facture.edit', {'id': facture.id}) }}">edit</a>
-
     {{ include('facture/_delete_form.html.twig') }}
 {% endblock %}
