@@ -74,9 +74,16 @@ class Facture
     #[ORM\OneToMany(targetEntity: LigneFacture::class, mappedBy: 'facture')]
     private Collection $ligneFactures;
 
+    /**
+     * @var Collection<int, Paiement>
+     */
+    #[ORM\OneToMany(targetEntity: Paiement::class, mappedBy: 'facture')]
+    private Collection $paiements;
+
     public function __construct()
     {
         $this->ligneFactures = new ArrayCollection();
+        $this->paiements = new ArrayCollection();
     }
 
 
@@ -233,6 +240,46 @@ class Facture
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Paiement>
+     */
+    public function getPaiements(): Collection
+    {
+        return $this->paiements;
+    }
+
+    public function addPaiement(Paiement $paiement): static
+    {
+        if (!$this->paiements->contains($paiement)) {
+            $this->paiements->add($paiement);
+            $paiement->setFacture($this);
+        }
+
+        return $this;
+    }
+
+    public function removePaiement(Paiement $paiement): static
+    {
+        if ($this->paiements->removeElement($paiement)) {
+            // set the owning side to null (unless already changed)
+            if ($paiement->getFacture() === $this) {
+                $paiement->setFacture(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTotalPaye(): float
+    {
+        return array_sum(array_map(fn($p) => $p->getMontant(), $this->paiements->toArray()));
+    }
+
+    public function getResteAPayer(): float
+    {
+        return $this->getMontantTTC() - $this->getTotalPaye();
     }
 
 }
