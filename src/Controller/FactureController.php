@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Facture;
+use App\Entity\Paiement;
 use App\Form\FactureType;
+use App\Form\PaiementType;
 use App\Repository\FactureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,10 +43,18 @@ final class FactureController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Facture $facture): Response
     {
-        return $this->render('facture/show.html.twig', ['facture' => $facture]);
+        $paiement = new Paiement();
+        $paiement->setFacture($facture);
+
+        $paiementForm = $this->createForm(PaiementType::class, $paiement);
+
+        return $this->render('facture/show.html.twig', [
+            'facture' => $facture,
+            'paiementForm' => $paiementForm,
+        ]);
     }
 
-    #[Route('/{id}/edit', name: 'facture.edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Facture $facture, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(FactureType::class, $facture);
@@ -56,7 +66,7 @@ final class FactureController extends AbstractController
             return $this->redirectToRoute('facture.index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('facture/edit.html.twig', ['form' => $form]);
+        return $this->render('facture/edit.html.twig', ['form' => $form, 'facture' => $facture]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]

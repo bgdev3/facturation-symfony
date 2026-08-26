@@ -9,13 +9,13 @@
         <tbody>
             <tr><th>Id</th><td>{{ facture.id }}</td></tr>
             <tr><th>Numero</th><td>{{ facture.numero }}</td></tr>
-            <tr><th>Date émission</th><td>{{ facture.deteEmission ? facture.deteEmission|date('d/m/Y') : '' }}</td></tr>
+            <tr><th>Date émission</th><td>{{ facture.dateEmission ? facture.dateEmission|date('d/m/Y') : '' }}</td></tr>
             <tr><th>Date échéance</th><td>{{ facture.dateEcheance ? facture.dateEcheance|date('d/m/Y') : '' }}</td></tr>
-            <tr><th>Statut</th><td>{{ facture.statut }}</td></tr>
+            <tr><th>Statut</th><td>{{ facture.statut.value }}</td></tr>
             <tr><th>Montant HT</th><td>{{ facture.montantHT }}</td></tr>
             <tr><th>Montant TVA</th><td>{{ facture.montantTVA }}</td></tr>
             <tr><th>Montant TTC</th><td>{{ facture.montantTTC }}</td></tr>
-            <tr><th>Conditions paiement</th><td>{{ facture.conditionsPaiment }}</td></tr>
+            <tr><th>Conditions paiement</th><td>{{ facture.conditionsPaiement }}</td></tr>
         </tbody>
     </table>
 
@@ -34,7 +34,7 @@
             <tr>
                 <td>{{ ligne.designation }}</td>
                 <td>{{ ligne.quantite }}</td>
-                <td>{{ ligne.prixUnitaire }}</td>
+                <td>{{ ligne.prixUnitaireHT }}</td>
                 <td>{{ ligne.total }}</td>
             </tr>
             {% endfor %}
@@ -56,9 +56,9 @@
             <tr>
                 <td>{{ paiement.date|date('d/m/Y') }}</td>
                 <td>{{ paiement.montant }} €</td>
-                <td>{{ paiement.moyen }}</td>
+                <td>{{ paiement.moyen.value }}</td>
                 <td>
-                    <form method="post" action="{{ path('paiement_delete', {id: paiement.id}) }}">
+                    <form method="post" action="{{ path('paiement.delete', {id: paiement.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ paiement.id) }}">
                         <button type="submit">Supprimer</button>
                     </form>
@@ -74,12 +74,12 @@
     </p>
 
     <h3>Ajouter un paiement</h3>
-    {{ form_start(paiementForm, {'action': path('paiement_new', {id: facture.id})}) }}
+    {{ form_start(paiementForm, {'action': path('paiement.new', {factureId: facture.id})}) }}
         {{ form_widget(paiementForm) }}
         <button type="submit">Enregistrer le paiement</button>
     {{ form_end(paiementForm) }}
 
     <a href="{{ path('facture.index') }}">back to list</a>
     <a href="{{ path('facture.edit', {'id': facture.id}) }}">edit</a>
-    {{ include('facture/_delete_form.html.twig') }}
+    {{ include('facture/_delete_form.html.twig', {'facture': facture}) }}
 {% endblock %}

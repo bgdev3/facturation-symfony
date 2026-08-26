@@ -21,7 +21,7 @@ final class DevisController extends AbstractController
         return $this->render('devis/index.html.twig', ['devis' => $devis]);
     }
 
-    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $devis = new Devis();
@@ -38,11 +38,11 @@ final class DevisController extends AbstractController
         return $this->render('devis/create.html.twig', [ 'form' => $form ]);
     }
 
-    #[Route('show/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Devis $devis): Response
     {
         return $this->render('devis/show.html.twig', [
-            'devi' => $devis,
+            'devis' => $devis,
         ]);
     }
 
@@ -58,10 +58,13 @@ final class DevisController extends AbstractController
             return $this->redirectToRoute('devis.index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('devis/edit.html.twig', ['form' => $form ]);
+       return $this->render('devis/edit.html.twig', [
+    'form' => $form,
+    'devis' => $devis,
+]);
     }
 
-    #[Route('/{id}', name: 'devis.delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$devis->getId(), $request->getPayload()->getString('_token'))) {

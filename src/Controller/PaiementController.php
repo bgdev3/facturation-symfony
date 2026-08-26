@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
- #[Route('/paiment', name: 'paiement.')]
+ #[Route('/paiement', name: 'paiement.')]
 final class PaiementController extends AbstractController
 {
     #[Route('/new/{factureId}', name: 'new', methods: ['POST'])]
@@ -33,6 +33,7 @@ final class PaiementController extends AbstractController
         }
 
         return $this->redirectToRoute('facture.show', ['id' => $facture->getId()]);
+        
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]

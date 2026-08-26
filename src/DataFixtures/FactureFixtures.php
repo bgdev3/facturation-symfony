@@ -7,6 +7,8 @@ use App\Entity\Facture;
 use App\Entity\LigneFacture;
 use App\Enum\DevisStatut;
 use App\Enum\FactureStatut;
+use App\Repository\FactureRepository;
+use App\Services\NumberInvoiceGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -21,7 +23,15 @@ class FactureFixtures extends Fixture implements DependentFixtureInterface
 
         $listDevis = $manager->getRepository(Devis::class)->findAll();
 
-       foreach($listDevis as $devis) {
+        $year = (new \DateTimeImmutable())->format('Y');
+
+        // Calcul direct ici pour la fixture sans utiliser le service car aucun facture crée ici
+        /** @var FactureRepository $repo */
+        $repo = $manager->getRepository(Facture::class);
+        $lastFacture  =$repo->findLastOfYear($year);
+        $compteur = $lastFacture ? (int) substr($lastFacture->getNumero(), -3) + 1 : 1;
+
+        foreach($listDevis as $devis) {
 
             if ($devis->getStatut() != DevisStatut::Accepte) 
                 continue;
@@ -30,7 +40,8 @@ class FactureFixtures extends Fixture implements DependentFixtureInterface
             $totalTVA = 0;
 
             $facture = new Facture();
-            $facture->setNumero('FAC-' . $faker->unique()->numerify('####'))
+            // $facture->setNumero('FAC-' . $faker->unique()->numerify('####'))
+            $facture->setNumero(sprintf('FAC-%s-%03d', $year, $compteur++))
                 ->setDateEmission(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-3 months', 'now')))
                 ->setDateEcheance(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+1 month')))
                 ->setStatut($faker->randomElement(FactureStatut::cases()))

@@ -105,4 +105,9 @@ class LigneFacture
 
         return $this;
     }
+
+    public function getTotal(): string
+    {
+        return bcmul($this->quantite ?? '0', $this->prixUnitaireHT ?? '0', 2);
+    }
 }

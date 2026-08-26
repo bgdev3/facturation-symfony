@@ -71,7 +71,7 @@ class Facture
     /**
      * @var Collection<int, LigneFacture>
      */
-    #[ORM\OneToMany(targetEntity: LigneFacture::class, mappedBy: 'facture')]
+    #[ORM\OneToMany(mappedBy: 'facture', targetEntity: LigneFacture::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $ligneFactures;
 
     /**

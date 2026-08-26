@@ -33,17 +33,17 @@
         <tbody class="bg-white divide-y divide-gray-200">
         {% for devis in devis %}
             <tr>
-                <td>{{ devi.id }}</td>
-                <td>{{ devi.numero }}</td>
-                <td>{{ devi.dateEmission ? devi.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ devi.dateValidite ? devi.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ devi.statut }}</td>
-                <td>{{ devi.montantHT }}</td>
-                <td>{{ devi.montantTVA }}</td>
-                <td>{{ devi.montantTTC }}</td>
+                <td>{{ devis.id }}</td>
+                <td>{{ devis.numero }}</td>
+                <td>{{ devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devis.statut.value }}</td>
+                <td>{{ devis.montantHT }}</td>
+                <td>{{ devis.montantTVA }}</td>
+                <td>{{ devis.montantTTC }}</td>
                 <td>
-                    <a href="{{ path('devis.show', {'id': devi.id}) }}">show</a>
-                    <a href="{{ path('devis.edit', {'id': devi.id}) }}">edit</a>
+                    <a href="{{ path('devis.show', {'id': devis.id}) }}">show</a>
+                    <a href="{{ path('devis.edit', {'id': devis.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
