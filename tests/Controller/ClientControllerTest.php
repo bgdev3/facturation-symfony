@@ -9,7 +9,7 @@ final class ClientControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/client');
+        $client->request('GET', '/client/');
 
         self::assertResponseIsSuccessful();
     }
