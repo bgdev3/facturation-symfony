@@ -65,7 +65,7 @@ class Devis
     /**
      * @var Collection<int, LigneDevis>
      */
-    #[ORM\OneToMany(targetEntity: LigneDevis::class, mappedBy: 'devis')]
+    #[ORM\OneToMany(mappedBy: 'devis', targetEntity: LigneDevis::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $ligneDevis;
 
     /**

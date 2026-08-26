@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Facture;
+use App\Enum\FactureStatut;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -37,9 +38,6 @@ final class FactureControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(200);
         self::assertPageTitleContains('Facture index');
-
-        // Use the $crawler to perform additional assertions e.g.
-        // self::assertSame('Some text on the page', $crawler->filter('.p')->first()->text());
     }
 
     public function testNew(): void
@@ -48,35 +46,34 @@ final class FactureControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(200);
 
+        // TODO: confirmer le texte exact du bouton submit (Twig)
         $this->client->submitForm('Save', [
-            'facture[numero]' => 'Testing',
-            'facture[deteEmission]' => 'Testing',
-            'facture[dateEcheance]' => 'Testing',
-            'facture[statut]' => 'Testing',
-            'facture[montantHT]' => 'Testing',
-            'facture[montantTVA]' => 'Testing',
-            'facture[montantTTC]' => 'Testing',
-            'facture[conditionsPaiment]' => 'Testing',
+            'facture[numero]' => 'FAC-2024-001',
+            'facture[dateEmission]' => '2024-01-15',
+            'facture[dateEcheance]' => '2024-02-15',
+            'facture[statut]' => FactureStatut::Brouillon->value,
+            'facture[montantHT]' => '100.00',
+            'facture[montantTVA]' => '20.00',
+            'facture[montantTTC]' => '120.00',
+            'facture[conditionsPaiement]' => '30 jours',
         ]);
 
-        self::assertResponseRedirects('/facture');
+        self::assertResponseRedirects('/facture/');
 
         self::assertSame(1, $this->factureRepository->count([]));
-
-        $this->markTestIncomplete('This test was generated');
     }
 
     public function testShow(): void
     {
         $fixture = new Facture();
-        $fixture->setNumero('My Title');
-        $fixture->setDeteEmission('My Title');
-        $fixture->setDateEcheance('My Title');
-        $fixture->setStatut('My Title');
-        $fixture->setMontantHT('My Title');
-        $fixture->setMontantTVA('My Title');
-        $fixture->setMontantTTC('My Title');
-        $fixture->setConditionsPaiment('My Title');
+        $fixture->setNumero('FAC-2024-002');
+        $fixture->setDateEmission(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setDateEcheance(new \DateTimeImmutable('2024-02-01'));
+        $fixture->setStatut(FactureStatut::Brouillon);
+        $fixture->setMontantHT('100.00');
+        $fixture->setMontantTVA('20.00');
+        $fixture->setMontantTTC('120.00');
+        $fixture->setConditionsPaiement('30 jours');
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -85,76 +82,72 @@ final class FactureControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(200);
         self::assertPageTitleContains('Facture');
-
-        // Use assertions to check that the properties are properly displayed.
-        $this->markTestIncomplete('This test was generated');
     }
 
     public function testEdit(): void
     {
         $fixture = new Facture();
-        $fixture->setNumero('Value');
-        $fixture->setDeteEmission('Value');
-        $fixture->setDateEcheance('Value');
-        $fixture->setStatut('Value');
-        $fixture->setMontantHT('Value');
-        $fixture->setMontantTVA('Value');
-        $fixture->setMontantTTC('Value');
-        $fixture->setConditionsPaiment('Value');
+        $fixture->setNumero('FAC-2024-003');
+        $fixture->setDateEmission(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setDateEcheance(new \DateTimeImmutable('2024-02-01'));
+        $fixture->setStatut(FactureStatut::Brouillon);
+        $fixture->setMontantHT('100.00');
+        $fixture->setMontantTVA('20.00');
+        $fixture->setMontantTTC('120.00');
+        $fixture->setConditionsPaiement('30 jours');
 
         $this->manager->persist($fixture);
         $this->manager->flush();
 
         $this->client->request('GET', sprintf('%s%s/edit', $this->path, $fixture->getId()));
 
+        // TODO: confirmer le texte exact du bouton submit (Twig)
         $this->client->submitForm('Update', [
-            'facture[numero]' => 'Something New',
-            'facture[deteEmission]' => 'Something New',
-            'facture[dateEcheance]' => 'Something New',
-            'facture[statut]' => 'Something New',
-            'facture[montantHT]' => 'Something New',
-            'facture[montantTVA]' => 'Something New',
-            'facture[montantTTC]' => 'Something New',
-            'facture[conditionsPaiment]' => 'Something New',
+            'facture[numero]' => 'FAC-2024-003',
+            'facture[dateEmission]' => '2024-03-01',
+            'facture[dateEcheance]' => '2024-04-01',
+            'facture[statut]' => 'envoyée', // adapter au vrai cas de l'enum
+            'facture[montantHT]' => '200.00',
+            'facture[montantTVA]' => '40.00',
+            'facture[montantTTC]' => '240.00',
+            'facture[conditionsPaiement]' => '60 jours',
         ]);
 
-        self::assertResponseRedirects('/facture');
+        self::assertResponseRedirects('/facture/');
 
         $fixture = $this->factureRepository->findAll();
 
-        self::assertSame('Something New', $fixture[0]->getNumero());
-        self::assertSame('Something New', $fixture[0]->getDeteEmission());
-        self::assertSame('Something New', $fixture[0]->getDateEcheance());
-        self::assertSame('Something New', $fixture[0]->getStatut());
-        self::assertSame('Something New', $fixture[0]->getMontantHT());
-        self::assertSame('Something New', $fixture[0]->getMontantTVA());
-        self::assertSame('Something New', $fixture[0]->getMontantTTC());
-        self::assertSame('Something New', $fixture[0]->getConditionsPaiment());
-
-        $this->markTestIncomplete('This test was generated');
+        self::assertSame('FAC-2024-003', $fixture[0]->getNumero());
+        self::assertSame('2024-03-01', $fixture[0]->getDateEmission()->format('Y-m-d'));
+        self::assertSame('2024-04-01', $fixture[0]->getDateEcheance()->format('Y-m-d'));
+        self::assertSame('envoyée', $fixture[0]->getStatut()->value);
+        self::assertSame('200.00', $fixture[0]->getMontantHT());
+        self::assertSame('40.00', $fixture[0]->getMontantTVA());
+        self::assertSame('240.00', $fixture[0]->getMontantTTC());
+        self::assertSame('60 jours', $fixture[0]->getConditionsPaiement());
     }
 
     public function testRemove(): void
     {
         $fixture = new Facture();
-        $fixture->setNumero('Value');
-        $fixture->setDeteEmission('Value');
-        $fixture->setDateEcheance('Value');
-        $fixture->setStatut('Value');
-        $fixture->setMontantHT('Value');
-        $fixture->setMontantTVA('Value');
-        $fixture->setMontantTTC('Value');
-        $fixture->setConditionsPaiment('Value');
+        $fixture->setNumero('FAC-2024-004');
+        $fixture->setDateEmission(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setDateEcheance(new \DateTimeImmutable('2024-02-01'));
+        $fixture->setStatut(FactureStatut::Brouillon);
+        $fixture->setMontantHT('100.00');
+        $fixture->setMontantTVA('20.00');
+        $fixture->setMontantTTC('120.00');
+        $fixture->setConditionsPaiement('30 jours');
 
         $this->manager->persist($fixture);
         $this->manager->flush();
 
         $this->client->request('GET', sprintf('%s%s', $this->path, $fixture->getId()));
+
+        // TODO: confirmer le texte exact du bouton submit (Twig)
         $this->client->submitForm('Delete');
 
-        self::assertResponseRedirects('/facture');
+        self::assertResponseRedirects('/facture/');
         self::assertSame(0, $this->factureRepository->count([]));
-
-        $this->markTestIncomplete('This test was generated');
     }
 }

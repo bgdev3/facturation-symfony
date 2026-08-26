@@ -3,6 +3,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Devis;
+use App\Entity\User;
+use App\Enum\DevisStatut;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -36,10 +38,7 @@ final class DevisControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->path);
 
         self::assertResponseStatusCodeSame(200);
-        self::assertPageTitleContains('Devi index');
-
-        // Use the $crawler to perform additional assertions e.g.
-        // self::assertSame('Some text on the page', $crawler->filter('.p')->first()->text());
+        self::assertPageTitleContains('Devis index');
     }
 
     public function testNew(): void
@@ -49,35 +48,30 @@ final class DevisControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(200);
 
         $this->client->submitForm('Save', [
-            'devi[numero]' => 'Testing',
-            'devi[dateEmission]' => 'Testing',
-            'devi[dateValidite]' => 'Testing',
-            'devi[statut]' => 'Testing',
-            'devi[montantHT]' => 'Testing',
-            'devi[montantTVA]' => 'Testing',
-            'devi[montantTTC]' => 'Testing',
-            'devi[client]' => 'Testing',
+            'devis[numero]' => 'DEV-2024-001',
+            'devis[dateEmission]' => '2024-01-01',
+            'devis[dateValidite]' => '2024-01-01',
+            'devis[statut]' => DevisStatut::Brouillon->value,
+            'devis[montantHT]' => '100.00',
+            'devis[montantTVA]' => '20.00',
+            'devis[montantTTC]' => '120.00',
         ]);
 
-        self::assertResponseRedirects('/devis');
-
+        self::assertResponseRedirects('/devis/');
         self::assertSame(1, $this->deviRepository->count([]));
-
-        $this->markTestIncomplete('This test was generated');
     }
 
     public function testShow(): void
     {
         $fixture = new Devis();
-        $fixture->setNumero('My Title');
-        $fixture->setDateEmission('My Title');
-        $fixture->setDateValidite('My Title');
-        $fixture->setStatut('My Title');
-        $fixture->setMontantHT('My Title');
-        $fixture->setMontantTVA('My Title');
-        $fixture->setMontantTTC('My Title');
-        $fixture->setClient('My Title');
-
+        $fixture->setNumero('DEV-2024-001');
+        $fixture->setDateEmission(new \DateTimeImmutable());
+        $fixture->setDateValidite(new \DateTimeImmutable());
+        $fixture->setStatut(DevisStatut::Brouillon);
+        $fixture->setMontantHT('100.00');
+        $fixture->setMontantTVA('20.00');
+        $fixture->setMontantTTC('120.00');
+    
         $this->manager->persist($fixture);
         $this->manager->flush();
 
@@ -85,66 +79,76 @@ final class DevisControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(200);
         self::assertPageTitleContains('Devi');
-
-        // Use assertions to check that the properties are properly displayed.
-        $this->markTestIncomplete('This test was generated');
     }
 
     public function testEdit(): void
     {
+
+        $client = new \App\Entity\Client();
+        $client->setName('Client Test')
+        ->setSiret('12345678901234')
+        ->setEmail('client.test@example.com')
+        ->setAddress('123 Rue Test')
+        ->setPostalCode('12345')
+        ->setCity('Testville')
+        ->setPhone('0123456789')
+        ->setCreatedAt(new \DateTimeImmutable());
+
+        $user = $this->manager->getRepository(User::class)->findOneBy([]);
+
+        if ($user === null) 
+            $this->markTestSkipped('Aucun utilisateur en base pour créer le client de test.');
+        
+        $client->setUser($user);
+        $this->manager->persist($client);
+
         $fixture = new Devis();
-        $fixture->setNumero('Value');
-        $fixture->setDateEmission('Value');
-        $fixture->setDateValidite('Value');
-        $fixture->setStatut('Value');
+        $fixture->setNumero('DEV-2024-001');
+        $fixture->setDateEmission(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setDateValidite(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setStatut(DevisStatut::Brouillon);
         $fixture->setMontantHT('Value');
         $fixture->setMontantTVA('Value');
         $fixture->setMontantTTC('Value');
-        $fixture->setClient('Value');
 
         $this->manager->persist($fixture);
         $this->manager->flush();
 
         $this->client->request('GET', sprintf('%s%s/edit', $this->path, $fixture->getId()));
 
-        $this->client->submitForm('Update', [
-            'devi[numero]' => 'Something New',
-            'devi[dateEmission]' => 'Something New',
-            'devi[dateValidite]' => 'Something New',
-            'devi[statut]' => 'Something New',
-            'devi[montantHT]' => 'Something New',
-            'devi[montantTVA]' => 'Something New',
-            'devi[montantTTC]' => 'Something New',
-            'devi[client]' => 'Something New',
+        $this->client->submitForm('Mettre à jour', [
+            'devis[numero]' => 'DEV-2024-001',
+            'devis[dateEmission]' => '2024-02-02',
+            'devis[dateValidite]' => '2024-02-02',
+            'devis[statut]' => 'brouillon',
+            'devis[montantHT]' => '100.00',
+            'devis[montantTVA]' => '20.00',
+            'devis[montantTTC]' => '120.00',
         ]);
 
-        self::assertResponseRedirects('/devis');
+        self::assertResponseRedirects('/devis/');
 
         $fixture = $this->deviRepository->findAll();
 
-        self::assertSame('Something New', $fixture[0]->getNumero());
-        self::assertSame('Something New', $fixture[0]->getDateEmission());
-        self::assertSame('Something New', $fixture[0]->getDateValidite());
-        self::assertSame('Something New', $fixture[0]->getStatut());
-        self::assertSame('Something New', $fixture[0]->getMontantHT());
-        self::assertSame('Something New', $fixture[0]->getMontantTVA());
-        self::assertSame('Something New', $fixture[0]->getMontantTTC());
-        self::assertSame('Something New', $fixture[0]->getClient());
-
-        $this->markTestIncomplete('This test was generated');
+        self::assertSame('DEV-2024-001', $fixture[0]->getNumero());
+        self::assertSame('2024-02-02', $fixture[0]->getDateEmission()->format('Y-m-d'));
+        self::assertSame('2024-02-02', $fixture[0]->getDateValidite()->format('Y-m-d'));
+        self::assertSame('brouillon', $fixture[0]->getStatut()->value);
+        self::assertSame('100.00', $fixture[0]->getMontantHT());
+        self::assertSame('20.00', $fixture[0]->getMontantTVA());
+        self::assertSame('120.00', $fixture[0]->getMontantTTC());
     }
 
     public function testRemove(): void
     {
         $fixture = new Devis();
-        $fixture->setNumero('Value');
-        $fixture->setDateEmission('Value');
-        $fixture->setDateValidite('Value');
-        $fixture->setStatut('Value');
+        $fixture->setNumero('DEV-2024-001');
+        $fixture->setDateEmission(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setDateValidite(new \DateTimeImmutable('2024-01-01'));
+        $fixture->setStatut(DevisStatut::Brouillon);
         $fixture->setMontantHT('Value');
         $fixture->setMontantTVA('Value');
         $fixture->setMontantTTC('Value');
-        $fixture->setClient('Value');
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -152,9 +156,7 @@ final class DevisControllerTest extends WebTestCase
         $this->client->request('GET', sprintf('%s%s', $this->path, $fixture->getId()));
         $this->client->submitForm('Delete');
 
-        self::assertResponseRedirects('/devis');
+        self::assertResponseRedirects('/devis/');
         self::assertSame(0, $this->deviRepository->count([]));
-
-        $this->markTestIncomplete('This test was generated');
     }
 }

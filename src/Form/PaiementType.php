@@ -3,9 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Paiement;
+use App\Enum\PaiementStatus;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,13 +17,9 @@ class PaiementType extends AbstractType
     {
         $builder->add('montant', MoneyType::class)
             ->add('date', DateType::class, ['widget' => 'single_text'])
-            ->add('moyen', ChoiceType::class, [
-                'choices' => [
-                    'Virement' => 'virement',
-                    'Chèque' => 'cheque',
-                    'CB' => 'cb',
-                    'Espèces' => 'especes',
-                ],
+            ->add('moyen', EnumType::class, [
+                'class' => PaiementStatus::class, 
+                'label' => 'Statut',
             ]);
     }
 

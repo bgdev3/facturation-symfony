@@ -9,42 +9,42 @@
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ devi.id }}</td>
+                <td>{{ devis.id }}</td>
             </tr>
             <tr>
                 <th>Numero</th>
-                <td>{{ devi.numero }}</td>
+                <td>{{ devis.numero }}</td>
             </tr>
             <tr>
                 <th>DateEmission</th>
-                <td>{{ devi.dateEmission ? devi.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
                 <th>DateValidite</th>
-                <td>{{ devi.dateValidite ? devi.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
                 <th>Statut</th>
-                <td>{{ devi.statut }}</td>
+                <td>{{ devis.statut.value }}</td>
             </tr>
             <tr>
                 <th>MontantHT</th>
-                <td>{{ devi.montantHT }}</td>
+                <td>{{ devis.montantHT }}</td>
             </tr>
             <tr>
                 <th>MontantTVA</th>
-                <td>{{ devi.montantTVA }}</td>
+                <td>{{ devis.montantTVA }}</td>
             </tr>
             <tr>
                 <th>MontantTTC</th>
-                <td>{{ devi.montantTTC }}</td>
+                <td>{{ devis.montantTTC }}</td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_devis_index') }}">back to list</a>
+    <a href="{{ path('devis.index') }}">back to list</a>
 
-    <a href="{{ path('app_devis_edit', {'id': devi.id}) }}">edit</a>
+    <a href="{{ path('devis.edit', {'id': devis.id}) }}">edit</a>
 
-    {{ include('devis/_delete_form.html.twig') }}
+   {{ include('devis/_delete_form.html.twig', {'devis': devis}) }}
 {% endblock %}

@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Repository\FactureRepository;
 
+/**
+ * Service utile en prod afin de factoriser le calcul. 
+ * Utile des qu'au moins 1 facture est crée.
+ */
 class NumberInvoiceGenerator
 {
     public function __construct(private FactureRepository $repo) {}

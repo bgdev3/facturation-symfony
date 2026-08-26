@@ -16,6 +16,17 @@ class FactureRepository extends ServiceEntityRepository
         parent::__construct($registry, Facture::class);
     }
 
+    public function findLastOfYear(string $year): ?Facture
+    {
+        return  $this->createQueryBuilder('f')
+                ->andWhere('f.numero LIKE :prefix')
+                ->setParameter(':prefix', sprintf('FAC-%s-%%', $year))
+                ->orderBy('f.dateEmission', 'DESC')
+                ->addOrderBy('f.id', 'DESC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+    }
     //    /**
     //     * @return Facture[] Returns an array of Facture objects
     //     */
