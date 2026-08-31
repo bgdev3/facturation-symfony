@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Facture {{ facture.numero }}</title>
+  <link rel="stylesheet" href="{{ gotenberg_asset('css/invoice.css') }}">
+</head>
+<body>
+  <div class="facture">
+
+    <header class="facture-header">
+      <div class="emetteur">
+        <div class="logo">{{ app.user.company.logo }}</div>
+        <p>
+         <strong> {{ app.user.company.name }} </strong> <br>
+          {{ app.user.company.address }}<br>
+          {{ app.user.company.postalCode }} {{ app.user.company.city }}<br>
+          SIRET : {{ app.user.company.siret }}
+        </p>
+      </div>
+      <div class="titre-bloc">
+        <h1>FACTURE</h1>
+        <table class="infos-facture">
+          <tr>
+            <td>N° facture</td>
+            <td>{{ facture.numero }}</td>
+          </tr>
+          <tr>
+            <td>Date d'émission</td>
+            <td>{{ facture.dateEmission|date('d/m/Y') }}</td>
+          </tr>
+          <tr>
+            <td>Date d'échéance</td>
+            <td>{{ facture.dateEcheance|date('d/m/Y') }}</td>
+          </tr>
+        </table>
+      </div>
+    </header>
+
+    <section class="client-bloc">
+      <div class="client">
+        <h2>Facturé à</h2>
+        <p>
+          {{ facture.client.name }}<br>
+          {{ facture.client.address }}<br>
+          {{ facture.client.postalCode }} {{ facture.client.city }}<br>
+          {{ facture.client.email }}
+        </p>
+      </div>
+    </section>
+
+    <table class="lignes">
+      <thead>
+        <tr>
+          <th class="col-desc">Description</th>
+          <th class="col-qte">Qté</th>
+          <th class="col-pu">Prix unitaire HT</th>
+          <th class="col-total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ligne in facture.ligneFactures %}
+        <tr>
+          <td>{{ ligne.designation }}</td>
+          <td>{{ ligne.quantite }}</td>
+          <td>{{ ligne.prixUnitaireHT|number_format(2, ',', ' ') }}&nbsp;€</td>
+          <td>{{ (ligne.quantite * ligne.prixUnitaireHT)|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <section class="totaux">
+      <table>
+        <tr>
+           {% for ligne in facture.ligneFactures %}
+          <td>TVA ({{ ligne.tauxTVA }}%)</td>
+           {% endfor %}
+          <td>{{ facture.montantTVA|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+        <tr class="total-final">
+          <td>Total TTC</td>
+          <td>{{ facture.montantTTC|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="paiement">
+      <h2>Modalités de paiement</h2>
+      <p>Virement bancaire — IBAN : {{ app.user.company.iban }}</p>
+      <p>Paiement à réception, sous {{ facture.conditionsPaiement }} jours.</p>
+    </section>
+
+    <footer class="facture-footer">
+      <p>{{ app.user.company.name }} — SIRET {{ app.user.company.siret }} — TVA intracommunautaire {{ app.user.company.tvaIntraCom }}</p>
+      <p>En cas de retard de paiement, une pénalité de 3 fois le taux d'intérêt légal sera appliquée, ainsi qu'une indemnité forfaitaire de 40 € pour frais de recouvrement.</p>
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+framework:
+  workflows:
+    devis:                          # nom du workflow
+      type: state_machine           # state_machine = un seul état à la fois (vs "workflow" qui permet plusieurs états simultanés)
+      audit_trail:
+        enabled: true               # log les transitions (utile en debug)
+      marking_store:
+        type: method
+        property: statut            # la propriété de l'entité qui stocke l'état
+      supports:
+        - App\Entity\Devis          # l'entité concernée
+      places:                       # tous les états possibles
+        - brouillon
+        - envoye
+        - accepte
+        - refuse
+      transitions:                  # les passages autorisés d'un état à un autre
+        envoyer:
+          from: brouillon
+          to: envoye
+        accepter:
+          from: envoye
+          to: accepte
+        refuser:
+          from: envoye
+          to: refuse
