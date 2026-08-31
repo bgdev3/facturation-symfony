@@ -1,0 +1,225 @@
+/* ===== Reset simple ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  color: #1f2933;
+  background: #ffffff;
+  line-height: 1.5;
+}
+
+/* ===== Conteneur principal ===== */
+.facture {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* ===== En-tête ===== */
+.facture-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #1f2933;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.emetteur .logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #0b5fff;
+  margin-bottom: 8px;
+}
+
+.emetteur p {
+  color: #52606d;
+  font-size: 12px;
+}
+
+.titre-bloc {
+  text-align: right;
+}
+
+.titre-bloc h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  color: #1f2933;
+}
+
+.infos-facture {
+  border-collapse: collapse;
+  margin-left: auto;
+}
+
+.infos-facture td {
+  padding: 3px 0 3px 16px;
+  font-size: 12px;
+  text-align: right;
+}
+
+.infos-facture td:first-child {
+  color: #7b8794;
+  padding-left: 0;
+}
+
+.infos-facture td:last-child {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+/* ===== Bloc client ===== */
+.client-bloc {
+  margin-bottom: 32px;
+}
+
+.client h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7b8794;
+  margin-bottom: 8px;
+}
+
+.client p {
+  font-size: 13px;
+  color: #1f2933;
+}
+
+/* ===== Tableau des lignes ===== */
+.lignes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+.lignes thead th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  background: #1f2933;
+  padding: 10px 12px;
+}
+
+.lignes .col-qte,
+.lignes .col-pu,
+.lignes .col-total {
+  text-align: right;
+}
+
+.lignes tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e4e7eb;
+  font-size: 13px;
+}
+
+.lignes tbody tr:last-child td {
+  border-bottom: 2px solid #1f2933;
+}
+
+.lignes .col-qte,
+.lignes .col-pu,
+.lignes .col-total {
+  white-space: nowrap;
+}
+
+.lignes tbody td.col-qte,
+.lignes tbody td.col-pu,
+.lignes tbody td.col-total {
+  text-align: right;
+}
+
+/* ===== Totaux ===== */
+.totaux {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 40px;
+}
+
+.totaux table {
+  border-collapse: collapse;
+  min-width: 260px;
+}
+
+.totaux td {
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.totaux td:first-child {
+  color: #52606d;
+}
+
+.totaux td:last-child {
+  text-align: right;
+  font-weight: 500;
+}
+
+.totaux .total-final td {
+  border-top: 2px solid #1f2933;
+  padding-top: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b5fff;
+}
+
+/* ===== Paiement ===== */
+.paiement {
+  background: #f5f7fa;
+  border-left: 3px solid #0b5fff;
+  padding: 16px 20px;
+  margin-bottom: 40px;
+}
+
+.paiement h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  color: #1f2933;
+}
+
+.paiement p {
+  font-size: 12px;
+  color: #52606d;
+}
+
+/* ===== Pied de page ===== */
+.facture-footer {
+  border-top: 1px solid #e4e7eb;
+  padding-top: 16px;
+  text-align: center;
+}
+
+.facture-footer p {
+  font-size: 10px;
+  color: #9aa5b1;
+  margin-bottom: 4px;
+}
+
+/* ===== Impression / PDF (Gotenberg) ===== */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .facture {
+    padding: 24px 32px;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
