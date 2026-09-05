@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice
+  xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+  xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+  xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100 ..\..\..\schema\CIUS\1p0\extended\UN\CEFACT\Data\Standard\CrossIndustryInvoice\100\CrossIndustryInvoice_1p0_Extended.xsd">
+
+  <!-- ========== EN-TÊTE ========== -->
+  <rsm:ExchangedDocumentContext>
+    <rsm:ID>{{ facture.numero }}</rsm:ID>
+    <rsm:TypeCode>380</rsm:TypeCode> <!-- 380 = Facture commerciale -->
+    <rsm:IssueDateTime>{{ facture.dateEmission|date('Y-m-d') }}T00:00:00</rsm:IssueDateTime>
+  </rsm:ExchangedDocumentContext>
+
+  <!-- ========== ÉMETTEUR (SELLER) ========== -->
+  <rsm:TradeAgreement>
+    <rsm:SellerTradeParty>
+      <rsm:Name>{{ app.user.company.name }}</rsm:Name>
+      <rsm:PostalTradeAddress>
+        <rsm:PostcodeCode>{{ app.user.company.postalCode }}</rsm:PostcodeCode>
+        <rsm:LineOne>{{ app.user.company.address }}</rsm:LineOne>
+        <rsm:CityName>{{ app.user.company.city }}</rsm:CityName>
+        <rsm:CountryID schemeID="ISO2">FR</rsm:CountryID>
+      </rsm:PostalTradeAddress>
+      <rsm:SpecifiedTaxRegistration>
+        <rsm:ID schemeID="0002">{{ app.user.company.tvaIntraCom }}</rsm:ID> <!-- TVA Intracommunautaire -->
+      </rsm:SpecifiedTaxRegistration>
+      <rsm:SpecifiedLegalOrganization>
+        <rsm:ID schemeID="0009">{{ app.user.company.siret }}</rsm:ID> <!-- SIRET -->
+      </rsm:SpecifiedLegalOrganization>
+    </rsm:SellerTradeParty>
+
+    <!-- ========== CLIENT (BUYER) ========== -->
+    <rsm:BuyerTradeParty>
+      <rsm:Name>{{ facture.client.name }}</rsm:Name>
+      <rsm:PostalTradeAddress>
+        <rsm:PostcodeCode>{{ facture.client.postalCode }}</rsm:PostcodeCode>
+        <rsm:LineOne>{{ facture.client.address }}</rsm:LineOne>
+        <rsm:CityName>{{ facture.client.city }}</rsm:CityName>
+        <rsm:CountryID schemeID="ISO2">FR</rsm:CountryID>
+      </rsm:PostalTradeAddress>
+      <rsm:SpecifiedTaxRegistration>
+        <rsm:ID schemeID="0002">{{ facture.client.tvaIntraCom|default('') }}</rsm:ID> <!-- À remplir si client UE -->
+      </rsm:SpecifiedTaxRegistration>
+    </rsm:BuyerTradeParty>
+  </rsm:TradeAgreement>
+
+  <!-- ========== LIGNES DE FACTURE ========== -->
+  <rsm:TradeSettlement>
+    <rsm:CurrencyCode>EUR</rsm:CurrencyCode>
+
+    <!-- Modalités de paiement -->
+    <rsm:PaymentMeans>
+      <rsm:TypeCode>58</rsm:TypeCode> <!-- 58 = Virement bancaire -->
+      <rsm:PayeePartyCreditorFinancialAccount>
+        <rsm:IBANID>{{ app.user.company.iban }}</rsm:IBANID>
+      </rsm:PayeePartyCreditorFinancialAccount>
+      <rsm:PaymentDueDate>{{ facture.dateEcheance|date('Y-m-d') }}</rsm:PaymentDueDate>
+    </rsm:PaymentMeans>
+    <rsm:PaymentTerms>
+      <rsm:Description>Paiement à réception, sous {{ facture.conditionsPaiement }} jours.</rsm:Description>
+    </rsm:PaymentTerms>
+
+    <!-- ========== LIGNES D'ARTICLES ========== -->
+    <rsm:InvoiceLine>
+      {% for ligne in facture.ligneFactures %}
+      <rsm:LineItem>
+        <rsm:ID>{{ loop.index }}</rsm:ID>
+        <rsm:InvoicedQuantity unitCode="C62">{{ ligne.quantite }}</rsm:InvoicedQuantity> <!-- C62 = Unité -->
+        <rsm:LineExtensionAmount currencyID="EUR">{{ (ligne.quantite * ligne.prixUnitaireHT)|number_format(2, '.', '') }}</rsm:LineExtensionAmount>
+        <rsm:Price>
+          <rsm:ChargeAmount currencyID="EUR">{{ ligne.prixUnitaireHT|number_format(2, '.', '') }}</rsm:ChargeAmount>
+        </rsm:Price>
+        <rsm:Item>
+          <rsm:Description>{{ ligne.designation }}</rsm:Description>
+        </rsm:Item>
+        <rsm:ApplicableTradeTax>
+          <rsm:CalculatedAmount currencyID="EUR">{{ (ligne.quantite * ligne.prixUnitaireHT * (ligne.tauxTVA/100))|number_format(2, '.', '') }}</rsm:CalculatedAmount>
+          <rsm:TypeCode>VAT</rsm:TypeCode> <!-- TVA -->
+          <rsm:CategoryCode>{{ ligne.tauxTVA == 0 ? 'E' : 'S' }}</rsm:CategoryCode> <!-- E = Exonéré, S = Standard -->
+          <rsm:RateApplicablePercent>{{ ligne.tauxTVA }}</rsm:RateApplicablePercent>
+        </rsm:ApplicableTradeTax>
+      </rsm:LineItem>
+      {% endfor %}
+    </rsm:InvoiceLine>
+
+    <!-- ========== TOTAUX ========== -->
+    <rsm:MonetarySummation>
+      <rsm:LineTotalAmount currencyID="EUR">{{ facture.ligneFactures|reduce((total, ligne) => total + (ligne.quantite * ligne.prixUnitaireHT), 0)|number_format(2, '.', '') }}</rsm:LineTotalAmount>
+      <rsm:ChargeTotalAmount currencyID="EUR">0.00</rsm:ChargeTotalAmount> <!-- Frais supplémentaires (0 si aucun) -->
+      <rsm:AllowanceTotalAmount currencyID="EUR">0.00</rsm:AllowanceTotalAmount> <!-- Réductions (0 si aucune) -->
+      <rsm:TaxBasisTotalAmount currencyID="EUR">{{ facture.ligneFactures|reduce((total, ligne) => total + (ligne.quantite * ligne.prixUnitaireHT), 0)|number_format(2, '.', '') }}</rsm:TaxBasisTotalAmount> <!-- Total HT -->
+      <rsm:TaxTotalAmount currencyID="EUR">{{ facture.montantTVA|number_format(2, '.', '') }}</rsm:TaxTotalAmount> <!-- Total TVA -->
+      <rsm:GrandTotalAmount currencyID="EUR">{{ facture.montantTTC|number_format(2, '.', '') }}</rsm:GrandTotalAmount> <!-- Total TTC -->
+    </rsm:MonetarySummation>
+
+    <!-- ========== DÉTAIL DE LA TVA (par taux) ========== -->
+    <rsm:ApplicableTradeTax>
+      {% set tauxs = facture.ligneFactures|map(ligne => ligne.tauxTVA)|unique %}
+      {% for taux in tauxs %}
+      <rsm:CalculatedAmount currencyID="EUR">
+        {{ facture.ligneFactures|filter(ligne => ligne.tauxTVA == taux)|reduce((total, ligne) => total + (ligne.quantite * ligne.prixUnitaireHT * (taux/100)), 0)|number_format(2, '.', '') }}
+      </rsm:CalculatedAmount>
+      <rsm:TypeCode>VAT</rsm:TypeCode>
+      <rsm:CategoryCode>{{ taux == 0 ? 'E' : 'S' }}</rsm:CategoryCode>
+      <rsm:RateApplicablePercent>{{ taux }}</rsm:RateApplicablePercent>
+      {% endfor %}
+    </rsm:ApplicableTradeTax>
+  </rsm:TradeSettlement>
+</rsm:CrossIndustryInvoice>
