@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+  <style>
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+}
+
+.accordion-content.active {
+  max-height: 1000px;
+  visibility: visible;
+  opacity: 1;
+}
+  </style>
+{% endblock %}
+
+{% block body %}
+  <h1 class="text-2xl font-bold mb-4">Édition du devis {{ devis.numero }}</h1>
+
+  <div class="flex flex-col lg:flex-row gap-4">
+   <div class="w-full lg:w-1/4 bg-gray-50 p-2 rounded-lg border" data-controller="accordion">
+  {{ form_start(form, { attr: { 'data-turbo-frame': 'devis_preview' } }) }}
+
+  <div class="space-y-1">
+    {# Section 1 : Infos générales #}
+    <div class="border-b border-gray-200">
+      <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
+           data-action="click->accordion#toggle"
+           data-accordion-target="trigger"
+           data-index="0">
+        <span class="text-sm font-bold text-gray-700">Infos générales</span>
+        <span class="text-gray-500">▼</span>
+      </div>
+      <div class="accordion-content px-2 pb-2"
+           data-accordion-target="content"
+           data-index="0">
+       
+        {{ form_row(form.numero, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+        <div class="grid grid-cols-2 gap-1 mt-1">
+            {{ form_row(form.dateEmission, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+          {{ form_row(form.dateValidite, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+        </div>
+        {{  form_row(form.statut, { attr: { class: 'w-full p-2 text-sm border rounded' } }) }}
+      </div>
+    </div>
+
+    {# Section 2 : Montants #}
+    <div class="border-b border-gray-200">
+      <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
+           data-action="click->accordion#toggle"
+           data-accordion-target="trigger"
+           data-index="1">
+        <span class="text-sm font-bold text-gray-700">Montants</span>
+        <span class="text-gray-500">▼</span>
+      </div>
+      <div class="accordion-content px-2 pb-2"
+           data-accordion-target="content"
+           data-index="1">
+        <div class="grid grid-cols-3 gap-1">
+          {{  form_row(form.montantHT, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+          {{  form_row(form.montantTTC, { attr: { class: 'w-full p-1 text-sm border rounded bg-gray-100', readonly: true } }) }}
+        </div>
+      </div>
+    </div>
+
+    {# Section 3 : Client et lignes #}
+    <div class="border-b border-gray-200">
+      <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
+           data-action="click->accordion#toggle"
+           data-accordion-target="trigger"
+           data-index="2">
+        <span class="text-sm font-bold text-gray-700">Client & Lignes</span>
+        <span class="text-gray-500">▼</span>
+      </div>
+      <div class="accordion-content px-2 pb-2"
+           data-accordion-target="content"
+           data-index="2">
+        {{  form_row(form.client, { attr: { class: 'w-full p-2 text-sm border rounded' } }) }}
+        {% for ligneForm in form.ligneDevis %}
+          <div class="mt-2 p-1 rounded space-y-1">
+            {{  form_row(ligneForm.designation, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+            {{  form_row(ligneForm.quantite, { attr: { class: 'w-full p-2 text-sm border rounded' } }) }}
+            {{  form_row(ligneForm.prixUnitaireHT, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+            {{  form_row(ligneForm.tauxTVA, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
+             {{ form_widget(ligneForm.devis, { attr: {class: 'hidden' }}) }}
+              
+          </div>
+        {% endfor %}
+         {{ form_widget(form.montantTVA, { attr: {class: 'hidden' }}) }}
+      </div>
+    </div>
+
+    <div class="p-2 flex gap-1">
+      <button type="submit" class="w-1/2 bg-blue-600 text-white py-1 px-2 rounded text-xs hover:bg-blue-700">Appliquer</button>
+    </div>
+  </div>
+
+  {{ form_end(form) }}
+</div>
+
+    {# Aperçu (75%) #}
+    <div class="w-full lg:w-3/4 bg-white p-4 rounded-lg shadow-md overflow-auto max-h-[calc(100vh-200px)]">
+      <h2 class="text-lg font-semibold mb-3 text-gray-700">Aperçu</h2>
+      <turbo-frame id="devis_preview" class="block">
+        {{ include('devis/preview.html.twig', { devis: devis }) }}
+      </turbo-frame>
+    </div>
+  </div>
+{% endblock %}

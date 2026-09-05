@@ -3,44 +3,90 @@
 {% block title %}Devis{% endblock %}
 
 {% block body %}
-    <h1>Devis</h1>
+    <h1 class="sr-only text-center text-2xl">Devis</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ devis.id }}</td>
-            </tr>
-            <tr>
-                <th>Numero</th>
-                <td>{{ devis.numero }}</td>
-            </tr>
-            <tr>
-                <th>DateEmission</th>
-                <td>{{ devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateValidite</th>
-                <td>{{ devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ devis.statut.value }}</td>
-            </tr>
-            <tr>
-                <th>MontantHT</th>
-                <td>{{ devis.montantHT }}</td>
-            </tr>
-            <tr>
-                <th>MontantTVA</th>
-                <td>{{ devis.montantTVA }}</td>
-            </tr>
-            <tr>
-                <th>MontantTTC</th>
-                <td>{{ devis.montantTTC }}</td>
-            </tr>
-        </tbody>
+<div class="max-w-[800px] mx-auto py-12 px-14 bg-white text-text-dark text-sm leading-6 print:py-6 print:px-8">
+  <!-- En-tête -->
+  <header class="flex justify-between items-start border-b-2 border-text-dark pb-6 mb-8">
+    <!-- Émetteur -->
+    <div class="emetteur">
+      <div class="logo text-xl font-bold text-primary-blue mb-2">{{ app.user.company.logo }}</div>
+      <p class="text-xs text-text-medium">
+        <strong>{{ app.user.company.name }}</strong><br>
+        {{ app.user.company.address }}<br>
+        {{ app.user.company.postalCode }} {{ app.user.company.city }}<br>
+        SIRET : {{ app.user.company.siret }}
+      </p>
+    </div>
+
+    <!-- Titre + Infos facture -->
+    <div class="titre-bloc text-right">
+      <h1 class="text-2xl font-bold tracking-widest mb-4 text-text-dark">FACTURE</h1>
+      <table class="infos-facture text-xs ml-auto">
+        <tr>
+          <td class="text-text-light pr-0">N° facture</td>
+          <td class="font-semibold text-text-dark pl-4">{{ devis.numero }}</td>
+        </tr>
+        <tr>
+          <td class="text-text-light pr-0">Date d'émission</td>
+          <td class="font-semibold text-text-dark pl-4">{{ devis.dateEmission|date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+          <td class="text-text-light pr-0">Date d'échéance</td>
+          <td class="font-semibold text-text-dark pl-4">{{ devis.dateValidite|date('d/m/Y') }}</td>
+        </tr>
+      </table>
+    </div>
+  </header>
+
+  <!-- Tableau des lignes -->
+  <table class="lignes w-full border-collapse mb-6">
+    <thead>
+      <tr>
+        <th class="col-desc text-center text-xs uppercase tracking-wider text-dark bg-text-dark py-2.5 px-3">Description</th>
+        <th class="col-qte text-center text-xs uppercase tracking-wider text-dark bg-text-dark py-2.5 px-3">Qté</th>
+        <th class="col-pu text-center text-xs uppercase tracking-wider text-dark bg-text-dark py-2.5 px-3">Prix unitaire HT</th>
+        <th class="col-total text-center text-xs uppercase tracking-wider text-dark bg-text-dark py-2.5 px-3">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ligne in devis.ligneDevis %}
+      <tr>
+        <td class="py-3 px-3 border-b border-border-light">{{ ligne.designation }}</td>
+        <td class="py-3 px-3 border-b border-border-light text-right whitespace-nowrap">{{ ligne.quantite }}</td>
+        <td class="py-3 px-3 border-b border-border-light text-right whitespace-nowrap">{{ ligne.prixUnitaireHT|number_format(2, ',', ' ') }}&nbsp;€</td>
+        <td class="py-3 px-3 border-b border-border-light text-right whitespace-nowrap">{{ (ligne.quantite * ligne.prixUnitaireHT)|number_format(2, ',', ' ') }}&nbsp;€</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="4" class="border-b-2 border-text-dark"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Totaux -->
+  <section class="totaux flex justify-end mb-10">
+    <table class="min-w-[260px] border-collapse">
+      <tbody>
+        <tr>
+        
+            <td class="py-1.5 text-text-medium">TVA ({{ devis.ligneDevis.first.tauxTVA }}%)</td>
+      
+          <td class="py-1.5 text-right font-medium">{{ devis.montantTVA|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+        <tr class="total-final">
+          <td class="py-2.5 text-text-dark font-bold text-base">Total TTC</td>
+          <td class="py-2.5 text-right text-primary-blue font-bold text-xl">{{ devis.montantTTC|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+      </tbody>
     </table>
+  </section>
+
+  <!-- Pied de page -->
+  <footer class="facture-footer border-t border-border-light pt-4 text-center">
+    <p class="text-xs text-text-lighter mb-1">Ce devis a une durée de validité de 1 mois.</p>
+  </footer>
+</div>
 
     <a href="{{ path('devis.index') }}">back to list</a>
 

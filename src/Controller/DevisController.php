@@ -64,6 +64,22 @@ final class DevisController extends AbstractController
 ]);
     }
 
+    #[Route('/{id}/edit-split', name: 'devis.edit_split')]
+    public function editSplit(Request $request, Devis $devis, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(DevisType::class, $devis);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+        }
+
+        return $this->render('devis/edit_split.html.twig', [
+            'devis' => $devis,
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
     {
