@@ -12,18 +12,18 @@
                 {% set colonnes = [
                 'Id',
                 'Numero',
-                'DateEmission',
-                'DateValidite',
-                'Statut',
+                'Date Emission',
+                'Date Validite',
                 'MontantHT',
                 'MontantTVA',
                 'MontantTTC',
+                 'Statut',
                 'actions'
                 ] %}
 
             <tr>
                 {% for colonne in colonnes %}
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider ">
                         {{ colonne }}
                     </th>
                 {% endfor %}
@@ -32,20 +32,37 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
         {% for devis in devis %}
-            <tr>
-                <td>{{ devis.id }}</td>
-                <td>{{ devis.numero }}</td>
-                <td>{{ devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ devis.statut.value }}</td>
-                <td>{{ devis.montantHT }}</td>
-                <td>{{ devis.montantTVA }}</td>
-                <td>{{ devis.montantTTC }}</td>
-                <td>
-                    <a href="{{ path('devis.show', {'id': devis.id}) }}">show</a>
-                    <a href="{{ path('devis.edit', {'id': devis.id}) }}">edit</a>
-                </td>
+
+            {% set colonnes = [
+                 devis.id,
+                 devis.numero ,
+                 devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' ,
+                 devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' ,
+                 devis.montantHT ,
+                 devis.montantTVA, 
+                 devis.montantTTC,  ]
+            %}
+            <tr class="hover:bg-gray-50 ">
+                {% for colonne in colonnes %}
+                    <th class="px-6 py-2 text-center whitespace-nowrap text-sm font-medium text-gray-900 ">
+                        {{ colonne }}
+                    </th>
+                {% endfor %}
+
+                 <th class="px-6 py-2 text-center whitespace-nowrap text-sm font-bold uppercase text-gray-900">
+                {{ include('components/badge_statut.html.twig', { statut: devis.statut }) }}
+            </th>
+                <th class="px-1 py-1 text-center whitespace-nowrap text-sm font-medium text-gray-900">
+                    <a href="{{ path('devis.show', {'id': devis.id}) }}" class="inline-block px-2.5 py-1.5 bg-green-300 font-bold text-dark text-xs  rounded-md hover:bg-green-100 transition-colors">Voir</a>
+                    <a href="{{ path('devis.edit', {'id': devis.id}) }}" class="inline-block px-2.5 py-1.5 bg-yellow-300 font-bold text-dark text-xs  rounded-md hover:bg-yellow-100 transition-colors">Modifier</a>
+                    <form action=" {{ path('devis.delete', {'id': devis.id}) }}" method="post" style="display:inline;">
+                            <button type="submit" class="inline-block px-2.5 py-1.5 bg-red-300 text-dark text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
+                                    name="_token" value="{{ csrf_token('delete' ~ devis.id) }} 
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')">Supprimer</button>
+                    </form>
+                </th>
             </tr>
+           
         {% else %}
             <tr class="text-center">
                 <td colspan="9">Auncun devis trouvé.</td>

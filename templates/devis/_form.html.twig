@@ -1,19 +1,26 @@
-{{ form_start(form) }}
-    {{ form_row(form.numero) }}
-    {{ form_row(form.dateEmission) }}
-    {{ form_row(form.dateValidite) }}
-    {{ form_row(form.statut) }}
-    {{ form_row(form.montantHT) }}
-    {{ form_row(form.montantTVA) }}
-    {{ form_row(form.montantTTC) }}
-    {{ form_row(form.client) }}
+
+<div class="flex flex-col lg:flex-row gap-4">
+    <div   class="w-full lg:w-1/3 bg-white p-4 rounded-lg shadow-md overflow-auto max-h-[calc(100vh-200px)]">
+
+    {{ form_start(form) }}
+        {{ form_row(form.numero) }}
+        {{ form_row(form.dateEmission) }}
+        {{ form_row(form.dateValidite) }}
+        {{ form_row(form.statut) }}
+        {{ form_row(form.montantHT) }}
+        {{ form_row(form.montantTVA) }}
+        {{ form_row(form.montantTTC) }}
+        {{ form_row(form.client) }}
+    
+    </div>
 
     <div data-controller="ligne-devis" 
-         data-ligne-devis-index-value="{{ form.ligneDevis|length }}">
+         data-ligne-devis-index-value="{{ form.ligneDevis|length }}"
+         class="w-full lg:w-2/3 bg-white p-4 rounded-lg shadow-md overflow-auto max-h-[calc(100vh-200px)]">
 
         {% set removeButtonHtml %}
         <div class="flex justify-center">
-             <button type="button" data-action="ligne-devis#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+             <button type="button" data-action="ligne-devis#remove" class="flex items-center justify-center  px-2.5 py-1.5 text-center bg-red-300 rounded-md text-dark text-xs hover:bg-red-100 transition-colors">Supprimer</button>
         </div>
            
         {% endset %}
@@ -27,15 +34,17 @@
                     <div class="flex-1">
                         {{ form_widget(ligneDevisForm) }}
                     </div>
-                    <button type="button" data-action="ligne-devis#remove" class="w-8 h-8 flex items-center justify-center bg-red-300 rounded-full text-dark hover:bg-red-100 transition-colors">×</button>
+                    <button type="button" data-action="ligne-devis#remove" class="flex items-center justify-center  px-2.5 py-1.5 text-center bg-red-300 rounded-md text-dark text-xs hover:bg-red-100 transition-colors">Supprimer</button>
                 </div>
             {% endfor %}
         </div>
 
-        <div class="flex justify-center mt-2 mb-2">
-            <button type="button" data-action="ligne-devis#add" class="w-8 h-8 flex items-center justify-center bg-green-300 rounded-full text-dark hover:bg-green-100 transition-colors">+</button>
+        <div class="flex justify-center items-center mt-2 mb-2">
+            <button type="button" data-action="ligne-devis#add" class="flex items-center justify-center px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark text-xs hover:bg-green-100 transition-colors">Ajouter une dénomination</button>
         </div>
     </div>
 
-    <button class="block mx-auto w-48 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded transition-colors">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+    
+</div>
+<button class="block mx-auto  px-3 py-2 bg-green-300 font-bold text-dark text-xs rounded-md hover:bg-green-100 transition-colors">{{ button_label|default('Créer le devis') }}</button>
+    {{ form_end(form) }}
