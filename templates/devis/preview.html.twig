@@ -11,10 +11,10 @@
       </p>
     </div>
     <div class="titre-bloc text-right">
-      <h1 class="text-2xl font-bold tracking-widest mb-4 text-text-dark">FACTURE</h1>
+      <h1 class="text-2xl font-bold tracking-widest mb-4 text-text-dark">DEVIS</h1>
       <table class="infos-facture text-xs ml-auto">
         <tr>
-          <td class="text-text-dark pr-0">N° facture</td>
+          <td class="text-text-dark pr-0">N° devis</td>
           <td class="font-semibold text-text-dark pl-4">{{ devis.numero }}</td>
         </tr>
         <tr>
@@ -55,6 +55,10 @@
   <section class="totaux flex justify-end mb-10">
     <table class="min-w-[260px] border-collapse">
       <tbody>
+         <tr class="total-final">
+          <td class="py-2.5 text-text-dark font-medium text-base">Montant HT</td>
+          <td class="py-2.5 text-right text-primary-blue font-medium text-base">{{ devis.montantHT }} €</td>
+        </tr>
         <tr>
           <td class="py-1.5 text-text-medium">TVA ({{ devis.ligneDevis.first.tauxTVA }}%)</td>
           <td class="py-1.5 text-right font-medium">{{ devis.montantTVA|number_format(2, ',', ' ') }} €</td>

@@ -18,7 +18,8 @@ class DevisFixtures extends Fixture implements DependentFixtureInterface
        
         $faker = Factory::create('fr_FR');
       
-
+        $year = (new \DateTimeImmutable())->format('Y');
+        $compteur = 000;
         // récupère les clients déjà créés (si DevisFixtures dépend de ClientFixtures)
         $clients = $manager->getRepository(Client::class)->findAll();
 
@@ -27,7 +28,7 @@ class DevisFixtures extends Fixture implements DependentFixtureInterface
             $totalTVA = 0;
 
             $devis = new Devis();
-            $devis->setNumero('DEV-' . $faker->unique()->numerify('####'))
+            $devis->setNumero(sprintf('DEV-%s-%03d', $year, $compteur++))
             ->setDateEmission(\DateTimeImmutable::createFromMutable( $faker->dateTimeBetween('-6 months', 'now')))
             ->setDateValidite(\DateTimeImmutable::createFromMutable( $faker->dateTimeBetween('now', '+1 month') ))
             ->setStatut($faker->randomElement(DevisStatut::cases()))

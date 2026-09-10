@@ -8,7 +8,6 @@ use App\Enum\DevisStatut;
 use App\Form\LigneDevisType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -22,7 +21,8 @@ class DevisType extends AbstractType
     {
         $builder
             ->add('numero', TextType::class, [
-                'label' => 'N° de devis'
+                'label' => 'N° de devis',
+                'disabled' => true,
             ])
             ->add('dateEmission', DateType::class, [
                 'widget' => 'single_text',
@@ -55,12 +55,10 @@ class DevisType extends AbstractType
                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
             ->add('ligneDevis', CollectionType::class, [
-                'label' => 'Ligne de Devis',
                 'entry_type' => LigneDevisType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
-                'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
         ;
     }

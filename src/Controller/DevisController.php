@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Devis;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
+use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/new', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, NumberGenerator $numberoGenerator ): Response
     {
         $devis = new Devis();
+        $devis->setNumero($numberoGenerator->genererProchainNumeroDevis());
+
         $form = $this->createForm(DevisType::class, $devis);
         $form->handleRequest($request);
 
@@ -47,37 +50,20 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(DevisType::class, $devis);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('devis.index', [], Response::HTTP_SEE_OTHER);
-        }
-
-       return $this->render('devis/edit.html.twig', [
-    'form' => $form,
-    'devis' => $devis,
-]);
-    }
-
-    #[Route('/{id}/edit-split', name: 'devis.edit_split')]
     public function editSplit(Request $request, Devis $devis, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(DevisType::class, $devis);
         $form->handleRequest($request);
-
+      
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+            if ($request->request->get('action') === 'save') {
+                $em->flush();
+
+                 return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
+            }
         }
 
-        return $this->render('devis/edit_split.html.twig', [
-            'devis' => $devis,
-            'form' => $form->createView(),
-        ]);
+        return $this->render('devis/edit_split.html.twig', ['devis' => $devis, 'form' => $form ]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
