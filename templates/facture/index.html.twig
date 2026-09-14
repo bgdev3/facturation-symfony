@@ -1,24 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Facture index{% endblock %}
+{% block title %}Facture{% endblock %}
 
 {% block body %}
-    <h1 class="text-center font-bold text-xl mt-6">Facture index</h1>
+    <h1 class="text-center font-bold text-xl mt-6">Factures</h1>
     <a href="{{ path('facture.new') }}" class="px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark hover:bg-green-100 transition-colors">Créer facture</a>
     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm mt-6"></div>
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
               
                     {% set colonnes = [
-                        'Id',
                         'Numero',
                         'Dete Emission', 
                         'Date Echeance',
-                        'Statut',
                         'Montant HT',
                         'Montant TV',
                         'Montant TTC',
                         'Conditions Paiments',
+                        'Statut',
                         'actions'
                     ] %}
 
@@ -29,23 +28,52 @@
                 {% endfor %}
 
             </thead>
-            <tbody>
-            {% for facture in factures %}
-                <tr>
-                    <td>{{ facture.id }}</td>
-                    <td>{{ facture.numero }}</td>
-                    <td>{{ facture.dateEmission ? facture.dateEmission|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ facture.dateEcheance ? facture.dateEcheance|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ facture.statut.value }}</td>
-                    <td>{{ facture.montantHT }}</td>
-                    <td>{{ facture.montantTVA }}</td>
-                    <td>{{ facture.montantTTC }}</td>
-                    <td>{{ facture.conditionsPaiement }}</td>
-                    <td>
-                        <a href="{{ path('facture.show', {'id': facture.id}) }}">show</a>
-                        <a href="{{ path('facture.edit', {'id': facture.id}) }}">edit</a>
-                    </td>
-                </tr>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for facture in factures %}
+
+                    {% set colonnes = [
+
+                        facture.numero ,
+                        facture.dateEmission ? facture.dateEmission|date('Y-m-d H:i:s') : '' ,
+                        facture.dateEcheance ? facture.dateEcheance|date('Y-m-d H:i:s') : '' ,
+                        facture.montantHT ,
+                        facture.montantTVA ,
+                        facture.montantTTC,
+                        facture.conditionsPaiement ] 
+                    %}
+
+                    <tr class="hover:bg-gray-50 ">
+                        {% for colonne in colonnes %}
+                            <th class="px-6 py-2 text-center whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ colonne }}
+                            </th>
+                        {% endfor %}
+                    
+                        <th class="px-6 py-2 text-center whitespace-nowrap text-sm font-bold uppercase text-gray-900">
+                            {{ include('components/badge_statut.html.twig', { statut: facture.statut }) }}
+                        </th>
+                        <th class="px-1 py-1 text-center whitespace-nowrap text-sm font-medium text-gray-900">
+                                            
+                            <div class="flex gap-2 w-full">
+                                
+                                {% if (facture.statut.value == "brouillon") %}
+                                    <a href="{{ path('facture.edit', {'id': facture.id}) }}" class="flex-1 text-center px-1.5 py-1.5 bg-yellow-300 font-bold text-dark text-xs rounded-md hover:bg-yellow-100 transition-colors">Modifier</a>
+                                {% else %}   
+                                    <a href="{{ path('facture.show', {'id': facture.id}) }}" class="flex-1 text-center px-1.5 py-1.5 bg-green-300 font-bold text-dark text-xs rounded-md hover:bg-green-100 transition-colors">Voir</a>
+                                {% endif %}
+
+                                <form action="{{ path('facture.delete', {'id': facture.id}) }}" method="post" class="flex-1">
+                                    <button type="submit" 
+                                            class="w-full px-2.5 py-1.5 bg-red-300 text-dark text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
+                                            name="_token" 
+                                            value="{{ csrf_token('delete' ~ facture.id) }}"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
             {% else %}
                 <tr class="text-center">
                     <td colspan="10">no records found</td>
