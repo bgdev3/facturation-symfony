@@ -10,13 +10,12 @@
         <thead>
             
                 {% set colonnes = [
-                'Id',
                 'Numero',
                 'Date Emission',
                 'Date Validite',
-                'MontantHT',
-                'MontantTVA',
-                'MontantTTC',
+                'Montant HT',
+                'Montant TVA',
+                'Montant TTC',
                  'Statut',
                 'actions'
                 ] %}
@@ -34,7 +33,6 @@
         {% for devis in devis %}
 
             {% set colonnes = [
-                 devis.id,
                  devis.numero ,
                  devis.dateEmission ? devis.dateEmission|date('Y-m-d H:i:s') : '' ,
                  devis.dateValidite ? devis.dateValidite|date('Y-m-d H:i:s') : '' ,
@@ -53,13 +51,26 @@
                 {{ include('components/badge_statut.html.twig', { statut: devis.statut }) }}
             </th>
                 <th class="px-1 py-1 text-center whitespace-nowrap text-sm font-medium text-gray-900">
-                    <a href="{{ path('devis.show', {'id': devis.id}) }}" class="inline-block px-2.5 py-1.5 bg-green-300 font-bold text-dark text-xs  rounded-md hover:bg-green-100 transition-colors">Voir</a>
-                    <a href="{{ path('devis.edit', {'id': devis.id}) }}" class="inline-block px-2.5 py-1.5 bg-yellow-300 font-bold text-dark text-xs  rounded-md hover:bg-yellow-100 transition-colors">Modifier</a>
-                    <form action=" {{ path('devis.delete', {'id': devis.id}) }}" method="post" style="display:inline;">
-                            <button type="submit" class="inline-block px-2.5 py-1.5 bg-red-300 text-dark text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
-                                    name="_token" value="{{ csrf_token('delete' ~ devis.id) }} 
-                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')">Supprimer</button>
-                    </form>
+                                    
+                    <div class="flex gap-2 w-full">
+                        
+                        {% if (devis.statut.value == "brouillon") %}
+                            <a href="{{ path('devis.edit', {'id': devis.id}) }}" class="flex-1 text-center px-1.5 py-1.5 bg-yellow-300 font-bold text-dark text-xs rounded-md hover:bg-yellow-100 transition-colors">Modifier</a>
+                        {% else %}   
+                            <a href="{{ path('devis.show', {'id': devis.id}) }}" class="flex-1 text-center px-1.5 py-1.5 bg-green-300 font-bold text-dark text-xs rounded-md hover:bg-green-100 transition-colors">Voir</a>
+                        {% endif %}
+
+                        <form action="{{ path('devis.delete', {'id': devis.id}) }}" method="post" class="flex-1">
+                            <button type="submit" 
+                                    class="w-full px-2.5 py-1.5 bg-red-300 text-dark text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
+                                    name="_token" 
+                                    value="{{ csrf_token('delete' ~ devis.id) }}"
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')">
+                                Supprimer
+                            </button>
+                        </form>
+                    </div>
+
                 </th>
             </tr>
            

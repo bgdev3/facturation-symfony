@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Devis;
+use App\Enum\DevisStatut;
+use App\Event\DevisAccepteEvent;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,19 +53,24 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function editSplit(Request $request, Devis $devis, EntityManagerInterface $em): Response
+    public function editSplit(Request $request, Devis $devis, EntityManagerInterface $em, EventDispatcherInterface $dispatch): Response
     {
+        $oldStatut = $devis->getStatut();
+       
         $form = $this->createForm(DevisType::class, $devis);
         $form->handleRequest($request);
       
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($request->request->get('action') === 'save') {
-                $em->flush();
 
-                 return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
+            if ($request->request->get('action') === 'save') {
+
+                $em->flush();
+               if ($oldStatut !== $devis->getStatut() && $devis->getStatut() === DevisStatut::Accepte) {
+                    $dispatch->dispatch(new DevisAccepteEvent($devis));
+                }
+                return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
             }
         }
-
         return $this->render('devis/edit_split.html.twig', ['devis' => $devis, 'form' => $form ]);
     }
 
