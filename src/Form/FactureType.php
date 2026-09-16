@@ -68,12 +68,10 @@ class FactureType extends AbstractType
                 'label' => 'conditions paiement'])
 
             ->add('ligneFactures', CollectionType::class, [
-                'label' => 'Ligne de Facture',
                 'entry_type' => LigneFactureType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
-                'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
         ;
     }

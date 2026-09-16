@@ -57,18 +57,25 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Facture $facture, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Facture $facture, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(FactureType::class, $facture);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
 
-            return $this->redirectToRoute('facture.index', [], Response::HTTP_SEE_OTHER);
+               if ($request->request->get('action') === 'save') {
+                 $em->flush();
+                  return $this->redirectToRoute('facture.show', [ 'id' => $facture->getId() ], Response::HTTP_SEE_OTHER);
+               }
+    
+            return $this->render('facture/edit_split.html.twig', [
+                'form' => $form,
+                'facture' => $facture,
+            ]);
         }
 
-        return $this->render('facture/edit.html.twig', ['form' => $form, 'facture' => $facture]);
+        return $this->render('facture/edit_split.html.twig', ['form' => $form, 'facture' => $facture]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
