@@ -4,26 +4,36 @@
     <h2 class="text-sm text-center font-bold mb-3 text-text-dark">Paiements enregistrés</h2>
     <table class="w-full border-collapse">
       <thead>
-        <tr>
-          <th class="text-left text-xs uppercase tracking-wider text-text-light py-2 border-b border-border-light">Date</th>
-          <th class="text-left text-xs uppercase tracking-wider text-text-light py-2 border-b border-border-light">Montant</th>
-          <th class="text-left text-xs uppercase tracking-wider text-text-light py-2 border-b border-border-light">Moyen</th>
-          <th class="border-b border-border-light print:hidden"></th>
-        </tr>
+          {% set colonnes = [
+              {label:'Date'},
+              {label:'Montant'},
+              {label:'Moyen'}, 
+              {trClass : 'border-b border-border-light print:hidden'}] 
+          %}
+          {% for colonne in colonnes %}
+            <th class=" {{ colonne.trClass|default('text-left text-xs uppercase tracking-wider text-text-light py-2 border-b border-border-light') }}"> {{ colonne.label|default('') }}</th>
+          {% endfor %}
+
       </thead>
       <tbody>
         {% for paiement in facture.paiements %}
-        <tr>
-          <td class=" text-xs py-2 border-b border-border-light">{{ paiement.date|date('d/m/Y') }}</td>
-          <td class="text-xs py-2 border-b border-border-light">{{ paiement.montant|number_format(2, ',', ' ') }}&nbsp;€</td>
-          <td class="text-xs py-2 border-b border-border-light">{{ paiement.moyen.value }}</td>
-          <td class="text-xs py-2 border-b border-border-light print:hidden">
-            <form method="post" action="{{ path('paiement.delete', {id: paiement.id}) }}">
-              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ paiement.id) }}">
-              <button type="submit" class="text-xs text-red-600 hover:underline">Supprimer</button>
-            </form>
-          </td>
-        </tr>
+          {% set colonnes = [
+              {value : paiement.date|date('d/m/Y'), numeric : false },
+              { value : paiement.montant|number_format(2, ',', ' '), numeric : true },
+              { value : paiement.moyen.value, numeric : false }]
+            %}
+          <tr>
+            {% for colonne in colonnes %}
+              <td class=" text-xs py-2 border-b border-border-light">{{  colonne.value }} {% if colonne.numeric %} &nbsp;€ {%endif%}</td>
+            {% endfor %}
+
+            <td class="text-xs py-2 border-b border-border-light print:hidden">
+              <form method="post" action="{{ path('paiement.delete', {id: paiement.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ paiement.id) }}">
+                <button type="submit" class="text-xs text-red-600 hover:underline">Supprimer</button>
+              </form>
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>

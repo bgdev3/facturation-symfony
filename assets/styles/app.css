@@ -15,3 +15,18 @@
         pointer-events: none;
     }
 }
+
+@layer components {
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  }
+  .accordion-content.active {
+    max-height: 1000px;
+    visibility: visible;
+    opacity: 1;
+  }
+}
