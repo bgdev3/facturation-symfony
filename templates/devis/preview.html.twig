@@ -60,7 +60,8 @@
           <td class="py-2.5 text-right text-primary-blue font-medium text-base">{{ devis.montantHT }} €</td>
         </tr>
         <tr>
-          <td class="py-1.5 text-text-medium">TVA ({{ devis.ligneDevis.first.tauxTVA }}%)</td>
+          {% set tva =  devis.ligneDevis.first %}
+          <td class="py-1.5 text-text-medium">TVA {% if tva  %} {{tva.tauxTVA }} {% endif %} </td>
           <td class="py-1.5 text-right font-medium">{{ devis.montantTVA|number_format(2, ',', ' ') }} €</td>
         </tr>
         <tr class="total-final">
