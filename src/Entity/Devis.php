@@ -36,7 +36,7 @@ class Devis
     private ?DevisStatut $statut = null;
 
     #[ORM\Column(length: 255, type: 'decimal', precision: 10, scale: 2)]
-    #[Assert\NotBlank(message: 'Le montant HT ne peut être vide.')]
+    // #[Assert\NotBlank(message: 'Le montant HT ne peut être vide.')]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
@@ -44,7 +44,7 @@ class Devis
     private string $montantHT = '';
 
     #[ORM\Column(length: 255, type: 'decimal', precision: 10, scale: 2)]
-     #[Assert\NotBlank(message: 'Le montant TVA ne peut être vide.')]
+    //  #[Assert\NotBlank(message: 'Le montant TVA ne peut être vide.')]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
@@ -52,7 +52,7 @@ class Devis
     private string $montantTVA = '';
 
     #[ORM\Column(length: 255, type: 'decimal', precision: 10, scale: 2)]
-        #[Assert\NotBlank(message: 'Le montant TTC ne peut être vide.')]
+        // #[Assert\NotBlank(message: 'Le montant TTC ne peut être vide.')]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
@@ -65,7 +65,7 @@ class Devis
     /**
      * @var Collection<int, LigneDevis>
      */
-    #[ORM\OneToMany(mappedBy: 'devis', targetEntity: LigneDevis::class, cascade: ['remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'devis', targetEntity: LigneDevis::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $ligneDevis;
 
     /**
@@ -239,5 +239,20 @@ class Devis
         }
 
         return $this;
+    }
+
+    public function recalculerTotaux(): void
+     {
+        $ht = 0.0;
+        $tva = 0.0;
+
+        foreach ($this->ligneDevis as $ligne) {
+            $ht  += $ligne->getMontantHT();
+            $tva += $ligne->getTauxTVA();
+        }
+
+        $this->montantHT  = number_format($ht, 2, '.', '');
+        $this->montantTVA = number_format($tva, 2, '.', '');
+        $this->montantTTC = number_format($ht + $tva, 2, '.', '');
     }
 }

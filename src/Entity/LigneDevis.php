@@ -36,7 +36,7 @@ class LigneDevis
     pattern: '/^\d+(\.\d{1,2})?$/',
     message: 'Le montant doit être un nombre valide (ex: 150.00).'
     )]
-    private ?string $tauxTVA = null;
+    private ?string $tauxTVA = '20.00';
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private ?string $montantHT = null;

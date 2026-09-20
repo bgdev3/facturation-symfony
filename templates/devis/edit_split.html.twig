@@ -87,7 +87,6 @@
             {{  form_row(ligneForm.quantite, { attr: { class: 'w-full p-2 text-sm border rounded' } }) }}
             {{  form_row(ligneForm.prixUnitaireHT, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
             {{  form_widget(ligneForm.tauxTVA, { attr: { class: 'hidden' } }) }}
-             {{ form_widget(ligneForm.devis, { attr: {class: 'hidden' }}) }}
               
           </div>
         {% endfor %}
@@ -100,11 +99,17 @@
      <!-- data-turbo-frame permet de sorti de Turbo afin que la redirection se fasse -->
       <button type="submit" name="action" value="save" data-turbo-frame="_top" class="w-1/2 cursor-pointer bg-green-300 text-dark font-bold py-1 px-2 rounded text-xs hover:bg-green-500">Valider le devis</button>
     </div>
+    
   </div>
 
-    {{ form_end(form) }}
+  <!-- Retire le submit ici du formulaire -->
+  <div class="hidden">
+    {{  form_row(form.save) }}
   </div>
+  
+  {{ form_end(form) }}
 
+  </div>
     {# Aperçu (75%) #}
     <div class="w-full lg:w-3/4 bg-white p-4 rounded-lg shadow-md overflow-auto max-h-[calc(100vh-200px)]">
       <h2 class="text-lg font-semibold mb-3 text-gray-700">Aperçu</h2>

@@ -33,9 +33,11 @@ final class DevisController extends AbstractController
 
         $form = $this->createForm(DevisType::class, $devis);
         $form->handleRequest($request);
-
+       
         if ($form->isSubmitted() && $form->isValid()) {
+         
             $entityManager->persist($devis);
+            $devis->recalculerTotaux();
             $entityManager->flush();
 
             return $this->redirectToRoute('devis.index', [], Response::HTTP_SEE_OTHER);
@@ -64,10 +66,12 @@ final class DevisController extends AbstractController
 
             if ($request->request->get('action') === 'save') {
 
+                $devis->recalculerTotaux();
                 $em->flush();
-               if ($oldStatut !== $devis->getStatut() && $devis->getStatut() === DevisStatut::Accepte) {
-                    $dispatch->dispatch(new DevisAccepteEvent($devis));
-                }
+
+                if ($oldStatut !== $devis->getStatut() && $devis->getStatut() === DevisStatut::Accepte) {
+                        $dispatch->dispatch(new DevisAccepteEvent($devis));
+                    }
                 return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
             }
         }
