@@ -7,6 +7,7 @@ use App\Entity\Paiement;
 use App\Form\FactureType;
 use App\Form\PaiementType;
 use App\Repository\FactureRepository;
+use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,15 +25,17 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, NumberGenerator $number): Response
     {
-
-
         $facture = new Facture();
+        $facture->setNumero($number->genererProchainNumeroFacture());
+
         $form = $this->createForm(FactureType::class, $facture);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+         
+            $facture->recalculerTotaux();
             $entityManager->persist($facture);
             $entityManager->flush();
 
@@ -63,12 +66,12 @@ final class FactureController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-               if ($request->request->get('action') === 'save') {
+            if( $request->request->get('action') === 'save') {
+                $facture->recalculerTotaux();
                  $em->flush();
                   return $this->redirectToRoute('facture.show', [ 'id' => $facture->getId() ], Response::HTTP_SEE_OTHER);
-               }
-    
+            }
+             
             return $this->render('facture/edit_split.html.twig', [
                 'form' => $form,
                 'facture' => $facture,

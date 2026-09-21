@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -50,19 +51,25 @@ class FactureType extends AbstractType
              ->add('devis', EntityType::class, [
                 'class' => Devis::class,
                 'label' => 'Devis en relation',
+                'required' => false,
                 'choice_label' => 'id',
                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
 
             ->add('montantHT', TextType::class, [
-                'label' => 'Montant HT'
+                   'mapped' => false,
+                   'required' => false
             ])
 
-            ->add('montantTVA',  TextType::class, [
-                'label' => 'Montant TVA'])
+            ->add('montantTVA',  TextType::class, [  
+                'mapped' => false,
+                'required' => false
+                ])
 
             ->add('montantTTC',  TextType::class, [
-                'label' => 'Montant TTC'])
+                'mapped' => false,
+                'required' => false,
+            ])
 
             ->add('conditionsPaiement',  TextType::class, [
                 'label' => 'conditions paiement'])
@@ -73,6 +80,10 @@ class FactureType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ])
+              ->add('save', SubmitType::class,[
+                'label' => 'Sauvegarder',
+                'attr' => ['class' => 'flex items-center justify-center px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark text-xs hover:bg-green-100 transition-colors'],
+            ])
         ;
     }
 
@@ -80,6 +91,7 @@ class FactureType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Facture::class,
+            'csrf_token_id' => 'facture_form',
         ]);
     }
 }

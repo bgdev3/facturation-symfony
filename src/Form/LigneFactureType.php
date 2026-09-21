@@ -2,10 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Facture;
 use App\Entity\LigneFacture;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,8 +23,8 @@ class LigneFactureType extends AbstractType
             ->add('prixUnitaireHT', TextType::class, [
                 'label' => ' Prix unitaire HT'
             ])
-            ->add('tauxTVA', TextType::class, [
-                'label' => ' Taux TVA'
+            ->add('tauxTVA', HiddenType::class, [
+                'empty_data' => '20.00',
             ])
         ;
     }

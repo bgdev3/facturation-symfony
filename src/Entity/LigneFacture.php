@@ -19,6 +19,10 @@ class LigneFacture
     private ?string $designation = null;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+     #[Assert\Regex(
+        pattern: '/^\d+(\.\d{1,2})?$/',
+        message: 'Le montant doit être un nombre valide (ex: 150.00).'
+    )]
     private ?string $quantite = null;
 
     
@@ -36,7 +40,7 @@ class LigneFacture
     pattern: '/^\d+(\.\d{1,2})?$/',
     message: 'Le montant doit être un nombre valide (ex: 150.00).'
     )]
-    private ?string $tauxTVA = null;
+    private ?string $tauxTVA = '20.00';
 
     #[ORM\ManyToOne(inversedBy: 'ligneFactures')]
     private ?Facture $facture = null;
@@ -105,9 +109,19 @@ class LigneFacture
 
         return $this;
     }
-
+   
     public function getTotal(): string
     {
         return bcmul($this->quantite ?? '0', $this->prixUnitaireHT ?? '0', 2);
+    }
+
+    public function getTotalHT(): string
+    {
+        return bcmul($this->quantite ?? '0', $this->prixUnitaireHT ?? '0', 2);
+    }
+
+    public function getMontantTVA(): string
+    {
+    return bcdiv(bcmul($this->getTotalHT(), $this->tauxTVA ?? '0', 4), '100', 2);
     }
 }

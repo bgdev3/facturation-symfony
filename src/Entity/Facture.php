@@ -7,9 +7,11 @@ use App\Repository\FactureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FactureRepository::class)]
+#[UniqueEntity(fields: ['numero'], message: 'Ce numéro de facture existe déjà.')]
 class Facture
 {
     #[ORM\Id]
@@ -17,10 +19,10 @@ class Facture
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50, unique: true)]
     #[Assert\NotBlank(message: 'Le numéro ne peut être vide.')]
     #[Assert\Regex(
-    pattern: '/^(DEV|FAC)-\d{4}-\d{3,}$/',
+    pattern: '/^FAC-\d{4}-\d{3,}$/',
     message: 'Le format du numéro doit être DEV-AAAA-000 ou FAC-AAAA-000.'
     )]
     private string $numero = '';
@@ -35,24 +37,21 @@ class Facture
     #[Assert\NotBlank(message: 'Le statut ne peut être vide.')]
     private ?FactureStatut $statut = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le montant HT ne peut être vide.')]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
     )]
     private string $montantHT = '';
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le montant TVA ne peut être vide.')]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
     )]
     private string $montantTVA = '';
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le montant TTC ne peut être vide.')]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Regex(
         pattern: '/^\d+(\.\d{1,2})?$/',
         message: 'Le montant doit être un nombre valide (ex: 150.00).'
@@ -280,6 +279,21 @@ class Facture
     public function getResteAPayer(): float
     {
         return $this->getMontantTTC() - $this->getTotalPaye();
+    }
+
+      public function recalculerTotaux(): void
+    {
+        $ht = '0.00';
+        $tva = '0.00';
+
+        foreach ($this->ligneFactures as $ligne) {
+            $ht  = bcadd($ht, $ligne->getTotalHT(), 2);
+            $tva = bcadd($tva, $ligne->getMontantTVA(), 2);
+        }
+
+        $this->montantHT  = $ht;
+        $this->montantTVA = $tva;
+        $this->montantTTC = bcadd($ht, $tva, 2);
     }
 
 }
