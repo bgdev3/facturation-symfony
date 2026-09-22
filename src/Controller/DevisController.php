@@ -83,17 +83,18 @@ final class DevisController extends AbstractController
     public function delete(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$devis->getId(), $request->getPayload()->getString('_token'))) {
+
+            $devisId = $devis->getId();
             $entityManager->remove($devis);
             $entityManager->flush();
 
                if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
                 return $this->render('devis/delete_stream.html.twig', [
-                    'id' => $devis->getId(),
+                    'id' => $devisId
                 ]);
             }
         }
-
         return $this->redirectToRoute('devis.index', [], Response::HTTP_SEE_OTHER);
     }
 }

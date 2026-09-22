@@ -23,6 +23,7 @@
 
   <div class="flex flex-col lg:flex-row gap-4">
     <div class="w-full lg:w-1/4 bg-gray-50 p-2 rounded-lg border" data-controller="accordion">
+       
     {{ form_start(form, { attr: { 'data-turbo-frame': 'facture_preview' } }) }}
 
     <div class="space-y-1">
@@ -38,7 +39,6 @@
       <div class="accordion-content px-2 pb-2"
            data-accordion-target="content"
            data-index="0">
-       
         {{ form_row(form.numero, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
         <div class="grid grid-cols-2 gap-1 mt-1">
             {{ form_row(form.dateEmission, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
@@ -87,6 +87,7 @@
      {{form_row(form.save) }}
   </div>
     {{ form_end(form) }}
+   
   </div>
 
     {# Aperçu (75%) #}
