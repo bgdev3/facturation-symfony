@@ -5,10 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Devis;
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
+use App\Enum\ConditionsStatus;
 use App\Enum\DevisStatut;
 use App\Enum\FactureStatut;
 use App\Repository\FactureRepository;
-use App\Services\NumberInvoiceGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -46,7 +46,7 @@ class FactureFixtures extends Fixture implements DependentFixtureInterface
                 ->setDateEcheance(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+1 month')))
                 ->setStatut($faker->randomElement(FactureStatut::cases()))
                 ->setClient($devis->getClient()) // même client que le devis
-                ->setConditionsPaiement($faker->randomElement(['Comptant', '30 jours net', '30 jours fin de mois']))
+                ->setConditionsPaiement($faker->randomElement(ConditionsStatus::cases()))
                 ->setDevis($devis); // lien vers le devis d'origine
 
             $nbLignes = $faker->numberBetween(2, 5);

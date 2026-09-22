@@ -86,13 +86,15 @@ final class FactureController extends AbstractController
     public function delete(Request $request, Facture $facture, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$facture->getId(), $request->getPayload()->getString('_token'))) {
+            
+            $facture_id = $facture->getId();
             $entityManager->remove($facture);
             $entityManager->flush();
 
              if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
                 return $this->render('facture/delete_stream.html.twig', [
-                    'id' => $facture->getId(),
+                    'id' => $facture_id,
         ]);
     }
         }

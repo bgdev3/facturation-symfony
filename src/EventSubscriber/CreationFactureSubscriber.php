@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Event\DevisAccepteEvent;
 use App\Services\NumberGenerator;
@@ -26,7 +27,7 @@ class CreationFactureSubscriber implements EventSubscriberInterface
             ->setDateEcheance(\DateTimeImmutable::createFromMutable(new \DateTime('+30 days')))
             ->setStatut(FactureStatut::Brouillon)
             ->setClient($devis->getClient()) 
-            ->setConditionsPaiement('Comptant')
+            ->setConditionsPaiement(ConditionsStatus::Paiments_30_jours)
             ->setDevis($devis); 
             
         foreach ($devis->getLigneDevis() as $ligneDevis) {
