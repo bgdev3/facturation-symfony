@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Client;
 use App\Entity\Devis;
 use App\Entity\Facture;
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,7 +23,8 @@ class FactureType extends AbstractType
     {
         $builder
             ->add('numero', TextType::class, [
-                'label' => 'N° de facture'
+                'label' => 'N° de facture', 
+                'disabled' => true,
             ])
 
             ->add('dateEmission', DateType::class, [
@@ -44,15 +46,16 @@ class FactureType extends AbstractType
             ->add('client', EntityType::class, [
                 'class' => Client::class,
                 'label' => 'Client en relation',
-                'choice_label' => 'id',
+                'choice_label' => 'name',
                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
 
              ->add('devis', EntityType::class, [
                 'class' => Devis::class,
+               'placeholder' => 'Sélectionnez un devis',
                 'label' => 'Devis en relation',
                 'required' => false,
-                'choice_label' => 'id',
+                'choice_label' => 'numero',
                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
             ])
 
@@ -71,8 +74,11 @@ class FactureType extends AbstractType
                 'required' => false,
             ])
 
-            ->add('conditionsPaiement',  TextType::class, [
-                'label' => 'conditions paiement'])
+            ->add('conditionsPaiement', EnumType::class, [
+                'class' => ConditionsStatus::class,
+                'label' => 'Conditions de paiement', 
+                'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']
+            ])
 
             ->add('ligneFactures', CollectionType::class, [
                 'entry_type' => LigneFactureType::class,
@@ -82,7 +88,7 @@ class FactureType extends AbstractType
             ])
               ->add('save', SubmitType::class,[
                 'label' => 'Sauvegarder',
-                'attr' => ['class' => 'flex items-center justify-center px-2.5 py-1.5 text-center bg-green-300 rounded-md text-dark text-xs hover:bg-green-100 transition-colors'],
+                'attr' => ['class' => 'inline-block px-2.5 py-1.5 text-center bg-green-300 font-bold rounded-md text-dark text-xs hover:bg-green-100 transition-colors'],
             ])
         ;
     }

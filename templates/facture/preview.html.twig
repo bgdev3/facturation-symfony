@@ -105,7 +105,7 @@
 
         <!-- Conditions -->
         <section class="mb-6 text-xs text-medium">
-            <strong>Conditions de paiement :</strong> {{ facture.conditionsPaiement }}
+            <strong>Conditions de paiement :</strong> {{ facture.conditionsPaiement.label ? facture.conditionsPaiement.label : '' }}
         </section>
     </div>
 

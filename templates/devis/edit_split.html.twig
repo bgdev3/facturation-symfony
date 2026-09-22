@@ -49,25 +49,6 @@
       </div>
     </div>
 
-    {# Section 2 : Montants #}
-    <div class="border-b border-gray-200">
-      <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
-           data-action="click->accordion#toggle"
-           data-accordion-target="trigger"
-           data-index="1">
-        <span class="text-sm font-bold text-gray-700">Montants</span>
-        <span class="text-gray-500">▼</span>
-      </div>
-      <div class="accordion-content px-2 pb-2"
-           data-accordion-target="content"
-           data-index="1">
-        <div class="grid grid-cols-3 gap-1">
-          {{  form_row(form.montantHT, { attr: { class: 'w-full p-1 text-sm border rounded' } }) }}
-          {{  form_row(form.montantTTC, { attr: { class: 'w-full p-1 text-sm border rounded bg-gray-100', readonly: true } }) }}
-        </div>
-      </div>
-    </div>
-
     {# Section 3 : Client et lignes #}
     <div class="border-b border-gray-200">
       <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
@@ -104,7 +85,9 @@
 
   <!-- Retire le submit ici du formulaire -->
   <div class="hidden">
-    {{  form_row(form.save) }}
+    {{ form_row(form.montantHT) }}
+    {{ form_row(form.montantTTC) }}
+    {{ form_row(form.save) }}
   </div>
   
   {{ form_end(form) }}

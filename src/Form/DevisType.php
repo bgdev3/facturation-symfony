@@ -68,8 +68,8 @@ class DevisType extends AbstractType
                 'by_reference' => false,
             ])
                ->add('save', SubmitType::class,[
-                'label' => 'save',
-                  'attr' => ['class' => 'block mx-auto  px-3 py-2 bg-green-300 font-bold text-dark text-xs rounded-md hover:bg-green-100 transition-colors'],
+                'label' => 'sauvegarder',
+                  'attr' => ['class' => 'inline-block px-2.5 py-1.5 text-center bg-green-300 font-bold rounded-md text-dark text-xs hover:bg-green-100 transition-colors'],
             ])
         ;
     }
