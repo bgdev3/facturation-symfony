@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
+use App\Enum\PaiementStatus;
 use App\Repository\FactureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -58,8 +60,8 @@ class Facture
     )]
     private string $montantTTC = '';
 
-    #[ORM\Column(length: 255, nullable:true)]
-    private string $conditionsPaiement = '';
+    #[ORM\Column(length: 255, enumType: ConditionsStatus::class, nullable:true)]
+    private ?ConditionsStatus $conditionsPaiement = null;
 
     #[ORM\ManyToOne(inversedBy: 'factures')]
     private ?Client $client = null;
@@ -175,12 +177,12 @@ class Facture
         return $this;
     }
 
-    public function getConditionsPaiement(): string
+    public function getConditionsPaiement(): ?ConditionsStatus
     {
         return $this->conditionsPaiement;
     }
 
-    public function setConditionsPaiement(string $conditionsPaiement): static
+    public function setConditionsPaiement(?ConditionsStatus $conditionsPaiement): static
     {
         $this->conditionsPaiement = $conditionsPaiement;
 

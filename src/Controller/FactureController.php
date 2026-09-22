@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/facture', name: 'facture.')]
 final class FactureController extends AbstractController
@@ -87,6 +88,13 @@ final class FactureController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$facture->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($facture);
             $entityManager->flush();
+
+             if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+                return $this->render('facture/delete_stream.html.twig', [
+                    'id' => $facture->getId(),
+        ]);
+    }
         }
 
         return $this->redirectToRoute('facture.index', [], Response::HTTP_SEE_OTHER);

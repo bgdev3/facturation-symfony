@@ -40,7 +40,7 @@
                  devis.montantTVA, 
                  devis.montantTTC,  ]
             %}
-            <tr class="hover:bg-gray-50 ">
+            <tr class="hover:bg-gray-50 "  id="devis_{{ devis.id }}">
                 {% for colonne in colonnes %}
                     <th class="px-6 py-2 text-center whitespace-nowrap text-sm font-medium text-gray-900 ">
                         {{ colonne }}
@@ -60,7 +60,7 @@
                             <a href="{{ path('devis.show', {'id': devis.id}) }}" class="flex-1 text-center px-1.5 py-1.5 bg-green-300 font-bold text-dark text-xs rounded-md hover:bg-green-100 transition-colors">Voir</a>
                         {% endif %}
 
-                        <form action="{{ path('devis.delete', {'id': devis.id}) }}" method="post" class="flex-1">
+                        <form action="{{ path('devis.delete', {'id': devis.id}) }}" method="post" class="flex-1" data-turbo-stream = "true">
                             <button type="submit" 
                                     class="w-full px-2.5 py-1.5 bg-red-300 text-dark text-xs font-bold rounded-md hover:bg-red-100 transition-colors"
                                     name="_token" 

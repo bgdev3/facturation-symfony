@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/devis', name:'devis.')]
 final class DevisController extends AbstractController
@@ -84,6 +85,13 @@ final class DevisController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$devis->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($devis);
             $entityManager->flush();
+
+               if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+                return $this->render('devis/delete_stream.html.twig', [
+                    'id' => $devis->getId(),
+                ]);
+            }
         }
 
         return $this->redirectToRoute('devis.index', [], Response::HTTP_SEE_OTHER);
