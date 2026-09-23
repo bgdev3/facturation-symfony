@@ -88,7 +88,7 @@
     <section class="paiement">
       <h2>Modalités de paiement</h2>
       <p>Virement bancaire — IBAN : {{ app.user.company.iban }}</p>
-      <p>Paiement à réception, sous {{ facture.conditionsPaiement }} jours.</p>
+      <p>Paiement à réception, sous {{  facture.conditionsPaiement.label ? facture.conditionsPaiement.label : '' }} jours.</p>
     </section>
 
     <footer class="facture-footer">
