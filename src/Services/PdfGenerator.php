@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use Sensiolabs\GotenbergBundle\GotenbergPdfInterface;
+use Sensiolabs\GotenbergBundle\Processor\InMemoryProcessor;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PdfGenerator
@@ -14,6 +15,17 @@ final class PdfGenerator
             ->content($template, $context)
             ->generate()
             ->stream() 
+        ;
+    }
+
+    // Pourpièce jointe, contenu brut, pas de flux de sortie
+    public function generateContent(string $template, array $context): string
+    {
+        return $this->gotenberg->html()
+            ->content($template, $context)
+            ->processor(new InMemoryProcessor())
+            ->generate()
+            ->process();
         ;
     }
 }
