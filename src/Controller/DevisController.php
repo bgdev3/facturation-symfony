@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Devis;
 use App\Enum\DevisStatut;
 use App\Event\DevisAccepteEvent;
+use App\Event\DevisSendEvent;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
 use App\Services\NumberGenerator;
@@ -70,9 +71,16 @@ final class DevisController extends AbstractController
                 $devis->recalculerTotaux();
                 $em->flush();
 
-                if ($oldStatut !== $devis->getStatut() && $devis->getStatut() === DevisStatut::Accepte) {
-                        $dispatch->dispatch(new DevisAccepteEvent($devis));
-                    }
+                if ($oldStatut !== $devis->getStatut()) { 
+                    $event = match ($devis->getStatut()) {
+                        DevisStatut::Accepte => new DevisAccepteEvent($devis),
+                        DevisStatut::Envoye => new DevisSendEvent($devis),
+                        default => null
+                    };
+                  
+                    if ($event != null)
+                        $dispatch->dispatch($event);
+                }
                 return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
             }
         }

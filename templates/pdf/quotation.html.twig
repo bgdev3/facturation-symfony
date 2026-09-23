@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Devis {{ devis.numero }}</title>
+  <link rel="stylesheet" href="{{ gotenberg_asset('css/invoice.css') }}">
+</head>
+<body>
+  <div class="facture">
+
+    <header class="facture-header">
+      <div class="emetteur">
+        <div class="logo">{{ app.user.company.logo }}</div>
+        <p>
+         <strong> {{ app.user.company.name }} </strong> <br>
+          {{ app.user.company.address }}<br>
+          {{ app.user.company.postalCode }} {{ app.user.company.city }}<br>
+          SIRET : {{ app.user.company.siret }}
+        </p>
+      </div>
+      <div class="titre-bloc">
+        <h1>DEVIS</h1>
+        <table class="infos-facture">
+          <tr>
+            <td>DEvis N°</td>
+            <td>{{ devis.numero }}</td>
+          </tr>
+          <tr>
+            <td>Date d'émission</td>
+            <td>{{ devis.dateEmission|date('d/m/Y') }}</td>
+          </tr>
+          <tr>
+            <td>Date d'échéance</td>
+            <td>{{ devis.dateValidite|date('d/m/Y') }}</td>
+          </tr>
+        </table>
+      </div>
+    </header>
+
+    <table class="lignes">
+      <thead>
+        <tr>
+          <th class="col-desc">Description</th>
+          <th class="col-qte">Qté</th>
+          <th class="col-pu">Prix unitaire HT</th>
+          <th class="col-total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ligne in devis.ligneDevis %}
+        <tr>
+          <td>{{ ligne.designation }}</td>
+          <td>{{ ligne.quantite }}</td>
+          <td>{{ ligne.prixUnitaireHT|number_format(2, ',', ' ') }}&nbsp;€</td>
+          <td>{{ (ligne.quantite * ligne.prixUnitaireHT)|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <section class="totaux">
+      <table>
+        <tr>
+           {% for ligne in devis.ligneDevis %}
+          <td>TVA ({{ ligne.tauxTVA }}%)</td>
+           {% endfor %}
+          <td>{{ devis.montantTVA|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+        <tr class="total-final">
+          <td>Total TTC</td>
+          <td>{{ devis.montantTTC|number_format(2, ',', ' ') }}&nbsp;€</td>
+        </tr>
+      </table>
+    </section>
+
+   
+    <footer class="facture-footer">
+      <p>Ce devis a une durée de validité de 3 mois</p>
+    </footer>
+
+  </div>
+</body>
+</html>
