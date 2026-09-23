@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Facture {{ facture.numero }}</title>
+  <title>Devis {{ devis.numero }}</title>
   <link rel="stylesheet" href="{{ gotenberg_asset('css/invoice.css') }}">
 </head>
 <body>
@@ -19,35 +19,23 @@
         </p>
       </div>
       <div class="titre-bloc">
-        <h1>FACTURE</h1>
+        <h1>DEVIS</h1>
         <table class="infos-facture">
           <tr>
-            <td>N° facture</td>
-            <td>{{ facture.numero }}</td>
+            <td>DEvis N°</td>
+            <td>{{ devis.numero }}</td>
           </tr>
           <tr>
             <td>Date d'émission</td>
-            <td>{{ facture.dateEmission|date('d/m/Y') }}</td>
+            <td>{{ devis.dateEmission|date('d/m/Y') }}</td>
           </tr>
           <tr>
             <td>Date d'échéance</td>
-            <td>{{ facture.dateEcheance|date('d/m/Y') }}</td>
+            <td>{{ devis.dateValidite|date('d/m/Y') }}</td>
           </tr>
         </table>
       </div>
     </header>
-
-    <section class="client-bloc">
-      <div class="client">
-        <h2>Facturé à</h2>
-        <p>
-          {{ facture.client.name }}<br>
-          {{ facture.client.address }}<br>
-          {{ facture.client.postalCode }} {{ facture.client.city }}<br>
-          {{ facture.client.email }}
-        </p>
-      </div>
-    </section>
 
     <table class="lignes">
       <thead>
@@ -59,7 +47,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for ligne in facture.ligneFactures %}
+        {% for ligne in devis.ligneDevis %}
         <tr>
           <td>{{ ligne.designation }}</td>
           <td>{{ ligne.quantite }}</td>
@@ -73,27 +61,21 @@
     <section class="totaux">
       <table>
         <tr>
-           {% for ligne in facture.ligneFactures %}
+           {% for ligne in devis.ligneDevis %}
           <td>TVA ({{ ligne.tauxTVA }}%)</td>
            {% endfor %}
-          <td>{{ facture.montantTVA|number_format(2, ',', ' ') }}&nbsp;€</td>
+          <td>{{ devis.montantTVA|number_format(2, ',', ' ') }}&nbsp;€</td>
         </tr>
         <tr class="total-final">
           <td>Total TTC</td>
-          <td>{{ facture.montantTTC|number_format(2, ',', ' ') }}&nbsp;€</td>
+          <td>{{ devis.montantTTC|number_format(2, ',', ' ') }}&nbsp;€</td>
         </tr>
       </table>
     </section>
 
-    <section class="paiement">
-      <h2>Modalités de paiement</h2>
-      <p>Virement bancaire — IBAN : {{ app.user.company.iban }}</p>
-      <p>Paiement à réception, sous {{  facture.conditionsPaiement.label ? facture.conditionsPaiement.label : '' }} jours.</p>
-    </section>
-
+   
     <footer class="facture-footer">
-      <p>{{ app.user.company.name }} — SIRET {{ app.user.company.siret }} — TVA intracommunautaire {{ app.user.company.tvaIntraCom }}</p>
-      <p>En cas de retard de paiement, une pénalité de 3 fois le taux d'intérêt légal sera appliquée, ainsi qu'une indemnité forfaitaire de 40 € pour frais de recouvrement.</p>
+      <p>Ce devis a une durée de validité de 3 mois</p>
     </footer>
 
   </div>

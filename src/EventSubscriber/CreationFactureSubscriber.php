@@ -7,6 +7,7 @@ use App\Entity\LigneFacture;
 use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Event\DevisAccepteEvent;
+use App\Services\FactureMailer;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -14,10 +15,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CreationFactureSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct( private EntityManagerInterface $em, private NumberGenerator $numeroGenerator) {}
+    public function __construct( private EntityManagerInterface $em, private NumberGenerator $numeroGenerator, private FactureMailer $mailer) {}
 
     public function onDevisAccepte(DevisAccepteEvent $event): void
     {
+         dump('CreationFactureSubscriber atteint');
         $devis = $event->getDevis();
 
         $facture = new Facture();
@@ -47,6 +49,8 @@ class CreationFactureSubscriber implements EventSubscriberInterface
 
         $this->em->persist($facture);
         $this->em->flush();
+
+        $this->mailer->invoiceOnDevisAccept($facture);
     }
 
     public static function getSubscribedEvents(): array
