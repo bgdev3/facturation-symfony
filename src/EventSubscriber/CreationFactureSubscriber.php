@@ -4,22 +4,31 @@ namespace App\EventSubscriber;
 
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
+use App\Entity\User;
 use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Event\DevisAccepteEvent;
+use App\Message\PdfGeneratorInvoiceMessage;
 use App\Services\FactureMailer;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\Engine\Secure;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class CreationFactureSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct( private EntityManagerInterface $em, private NumberGenerator $numeroGenerator, private FactureMailer $mailer) {}
+    public function __construct( 
+        private EntityManagerInterface $em, 
+        private NumberGenerator $numeroGenerator, 
+        private readonly MessageBusInterface $bus, 
+        private readonly Security $security
+        ) {}
 
     public function onDevisAccepte(DevisAccepteEvent $event): void
     {
-         dump('CreationFactureSubscriber atteint');
         $devis = $event->getDevis();
 
         $facture = new Facture();
@@ -50,7 +59,14 @@ class CreationFactureSubscriber implements EventSubscriberInterface
         $this->em->persist($facture);
         $this->em->flush();
 
-        $this->mailer->invoiceOnDevisAccept($facture);
+        // Récupère le User afin de récupere l'Id de la company.
+        $user = $this->security->getUser();
+        if (!$user instanceof User)
+            throw new \LogicException('Aucun utilisateur connecté pour générer le devis.');
+        
+        $company = $user->getCompany();
+       
+        $this->bus->dispatch(new PdfGeneratorInvoiceMessage($facture->getId(), $company->getId()));
     }
 
     public static function getSubscribedEvents(): array
