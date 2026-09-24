@@ -10,12 +10,12 @@
 
     <header class="facture-header">
       <div class="emetteur">
-        <div class="logo">{{ app.user.company.logo }}</div>
+        <div class="logo">{{ company.logo }}</div>
         <p>
-         <strong> {{ app.user.company.name }} </strong> <br>
-          {{ app.user.company.address }}<br>
-          {{ app.user.company.postalCode }} {{ app.user.company.city }}<br>
-          SIRET : {{ app.user.company.siret }}
+         <strong> {{ company.name }} </strong> <br>
+          {{ company.address }}<br>
+          {{ company.postalCode }} {{ company.city }}<br>
+          SIRET : {{ company.siret }}
         </p>
       </div>
       <div class="titre-bloc">

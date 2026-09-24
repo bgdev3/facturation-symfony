@@ -14,6 +14,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 
@@ -72,20 +73,22 @@ final class DevisController extends AbstractController
                 $em->flush();
 
                 if ($oldStatut !== $devis->getStatut()) { 
+
                     $event = match ($devis->getStatut()) {
                         DevisStatut::Accepte => new DevisAccepteEvent($devis),
                         DevisStatut::Envoye => new DevisSendEvent($devis),
                         default => null
                     };
-                  
-                    if ($event != null)
+                   if ($event !== null) {
                         $dispatch->dispatch($event);
+                    }
+                    return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
                 }
-                return $this->redirectToRoute('devis.show', ['id' => $devis->getId() ], Response::HTTP_SEE_OTHER);
             }
         }
         return $this->render('devis/edit_split.html.twig', ['devis' => $devis, 'form' => $form ]);
     }
+    
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
