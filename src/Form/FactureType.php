@@ -7,7 +7,9 @@ use App\Entity\Devis;
 use App\Entity\Facture;
 use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
+use App\Repository\ClientRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -19,8 +21,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FactureType extends AbstractType
 {
+    public function __construct(private readonly Security $security) 
+    {
+       
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $this->security->getUser();
+        
         $builder
             ->add('numero', TextType::class, [
                 'label' => 'N° de facture', 
@@ -45,6 +53,9 @@ class FactureType extends AbstractType
 
             ->add('client', EntityType::class, [
                 'class' => Client::class,
+                  'query_builder' => function (ClientRepository $repo) use ($user) {
+                    return $repo->createQueryBuilder('c')->where('c.user = :user')->setParameter('user', $user);
+                },
                 'label' => 'Client en relation',
                 'choice_label' => 'name',
                 'attr' => ['class' => 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500']

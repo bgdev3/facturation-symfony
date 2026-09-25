@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsEventListener]
 final class DevisMailerListener
 {
-    public function __construct(private MessageBusInterface $bus,  private readonly Security $security) {}
+    public function __construct(private readonly MessageBusInterface $bus,  private readonly Security $security) {}
 
     public function __invoke(DevisSendEvent $event): void
     {

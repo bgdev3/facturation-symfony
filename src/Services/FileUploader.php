@@ -15,8 +15,8 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class FileUploader
 {
     public function __construct(
-        private Filesystem  $uploadsStorage,
-        private SluggerInterface $slugger,
+        private readonly Filesystem  $uploadsStorage,
+        private readonly SluggerInterface $slugger,
     ) {}
 
     /**

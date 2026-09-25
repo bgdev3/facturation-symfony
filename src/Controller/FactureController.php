@@ -4,24 +4,35 @@ namespace App\Controller;
 
 use App\Entity\Facture;
 use App\Entity\Paiement;
+use App\Entity\User;
 use App\Form\FactureType;
 use App\Form\PaiementType;
 use App\Repository\FactureRepository;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/facture', name: 'facture.')]
+#[IsGranted('ROLE_USER')]
 final class FactureController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(FactureRepository $repo): Response
+    public function index(Request $request, FactureRepository $repo): Response
     {
-        $factures  = $repo->findAll();
+        /** @var User $user */
+        $user = $this->getUser();
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
+
+        $factures = $repo->paginationInvoice( 
+            $request->query->getInt('page', 1), 
+            $isAdmin ? null : $user->getId() );
+
         return $this->render('facture/index.html.twig', [ 'factures' => $factures]);
     }
 
@@ -47,6 +58,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[IsGranted('POST_VIEW', 'facture')]
     public function show(Facture $facture): Response
     {
         $paiement = new Paiement();
@@ -61,6 +73,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[IsGranted('POST_EDIT', 'facture')]
     public function edit(Request $request, Facture $facture, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(FactureType::class, $facture);
@@ -83,6 +96,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[IsGranted('POST_DELETE', 'facture')]
     public function delete(Request $request, Facture $facture, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$facture->getId(), $request->getPayload()->getString('_token'))) {

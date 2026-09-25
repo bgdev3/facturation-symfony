@@ -19,10 +19,10 @@ use Symfony\Component\Mime\Email;
 final class PdfGeneratorMessageHandler
 {
     public function __construct(
-        private PdfGenerator $pdfGenerator,
+        private readonly PdfGenerator $pdfGenerator,
         private readonly MailerInterface $mailer,
-        private DevisRepository $devisRepo,
-        private FactureRepository $factureRepo, 
+        private readonly DevisRepository $devisRepo,
+        private readonly FactureRepository $factureRepo, 
         private readonly CompanyRepository $companyRepo
     ) {}
 

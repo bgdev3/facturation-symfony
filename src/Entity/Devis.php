@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Enum\DevisStatut;
+use App\Enum\FactureStatut;
 use App\Repository\DevisRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -256,5 +257,15 @@ class Devis
         $this->montantHT  = number_format($ht, 2, '.', '');
         $this->montantTVA = number_format($tva, 2, '.', '');
         $this->montantTTC = number_format($ht + $tva, 2, '.', '');
+    }
+
+     public function isEditable(): bool
+    {
+        return $this->statut == FactureStatut::Brouillon;
+    }
+
+    public function isDeletable(): bool
+    {
+        return $this->statut === FactureStatut::Brouillon;
     }
 }

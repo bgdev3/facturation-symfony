@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Devis;
+use App\Entity\User;
 use App\Enum\DevisStatut;
 use App\Event\DevisAccepteEvent;
 use App\Event\DevisSendEvent;
@@ -12,19 +13,27 @@ use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/devis', name:'devis.')]
 final class DevisController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(DevisRepository $repo): Response
+    public function index(Request $request, DevisRepository $repo, Security $security): Response
     {
-        $devis = $repo->findAll();
+        /** @var User $user */
+        $user = $this->getUser();
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
+
+        $devis = $repo->paginationQuotation( 
+            $request->query->getInt('page', 1), 
+            $isAdmin ? null : $user->getId() );
+
         return $this->render('devis/index.html.twig', ['devis' => $devis]);
     }
 
@@ -50,6 +59,7 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[IsGranted('DEVIS_VIEW', 'devis')]
     public function show(Devis $devis): Response
     {
         return $this->render('devis/show.html.twig', [
@@ -58,6 +68,7 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[IsGranted('DEVIS_EDIT', 'devis')]
     public function editSplit(Request $request, Devis $devis, EntityManagerInterface $em, EventDispatcherInterface $dispatch): Response
     {
         $oldStatut = $devis->getStatut();
@@ -89,8 +100,8 @@ final class DevisController extends AbstractController
         return $this->render('devis/edit_split.html.twig', ['devis' => $devis, 'form' => $form ]);
     }
     
-
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[IsGranted('DEVIS_DELETE', 'devis')]
     public function delete(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$devis->getId(), $request->getPayload()->getString('_token'))) {

@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 
 class LogoSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private FileUploader $fileUploader) {}
+    public function __construct(private readonly FileUploader $fileUploader) {}
 
     public function onFormPostSubmit(FormEvent $event): void
     {

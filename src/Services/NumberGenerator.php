@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class NumberGenerator
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 

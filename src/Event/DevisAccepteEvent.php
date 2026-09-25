@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class DevisAccepteEvent extends Event
 {
-    public function __construct(private Devis $devis){}
+    public function __construct(private readonly Devis $devis){}
 
     public function getDevis(): Devis
     {
