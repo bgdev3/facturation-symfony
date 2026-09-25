@@ -13,7 +13,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     public const USER_REFERENCE = 'main-user';
 
-    public function __construct(private UserPasswordHasherInterface $hasher){}
+    public function __construct(private readonly UserPasswordHasherInterface $hasher){}
 
     public function load(ObjectManager $manager): void
     {

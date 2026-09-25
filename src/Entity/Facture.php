@@ -298,4 +298,14 @@ class Facture
         $this->montantTTC = bcadd($ht, $tva, 2);
     }
 
+    public function isEditable(): bool
+    {
+        return $this->statut == FactureStatut::Brouillon;
+    }
+
+    public function isDeletable(): bool
+    {
+        return $this->statut === FactureStatut::Brouillon;
+    }
+
 }

@@ -9,10 +9,8 @@ use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Event\DevisAccepteEvent;
 use App\Message\PdfGeneratorInvoiceMessage;
-use App\Services\FactureMailer;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
-use Random\Engine\Secure;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -21,8 +19,8 @@ class CreationFactureSubscriber implements EventSubscriberInterface
 {
 
     public function __construct( 
-        private EntityManagerInterface $em, 
-        private NumberGenerator $numeroGenerator, 
+        private readonly EntityManagerInterface $em, 
+        private readonly NumberGenerator $numeroGenerator, 
         private readonly MessageBusInterface $bus, 
         private readonly Security $security
         ) {}
