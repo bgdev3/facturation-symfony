@@ -4,19 +4,105 @@
 
 {% block body %}
 
-<div class="w-sm mx-auto bg-white rounded-lg shadow border border-gray-200 overflow-hidden mt-6">
-    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <h3 class="text-lg text-center font-semibold text-gray-900">{{ client.name }}</h3>
+<div class="max-w-6xl mx-auto mt-8 px-4">
+
+    {# Bandeau infos client #}
+    <div class="bg-white rounded-lg shadow border border-gray-200 mb-6 mt-6 overflow-hidden">
+        <div class="bg-gray-50 px-6 py-2 border-b border-gray-200">
+            <h3 class="text-md text-center font-bold text-gray-800">{{ client.name }}</h3>
+        </div>
+        <div class="px-6 py-4">
+             {% set colonnes = [
+                { label:'Siret :', value:  client.siret},
+                  { label:'Email :', value:  client.email},
+                    { label:'Adresse :', value: client.address ~ ', ' ~ client.postalCode ~ ' ' ~ client.city },
+                  { label:'Contact :', value:  client.phone},
+                ] %}
+                  
+                <div class="flex justify-between items-center">
+                    {% for colonne in colonnes %}
+                        <div>
+                            <span class="font-semibold text-gray-700"> {{ colonne.label}} </span>
+                            <span>{{ colonne.value }}</span>
+                        </div>
+                    {% endfor %} 
+                </div>
+           
+        </div>
     </div>
-    <div class="px-6 py-4">
-        <p class="text-sm text-center text-gray-600"><strong>Siret: </strong>{{ client.siret }}</p>
-        <p class="text-sm text-center text-gray-600"><strong>Email: </strong>{{ client.email }} </p>
-        <p class="text-sm text-center text-gray-600"><strong>Adresse:</strong> {{ client.address}} {{ client.postalCode}} {{ client.city}}</p>
-        <p class="text-sm text-center text-gray-600"><strong>Contact:</strong> {{ client.phone }}</p>
+
+    {# 2 colonnes : Factures / Devis #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {# Colonne Factures #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-800">Factures</h4>
+            </div>
+            <div>
+                {% if client.factures is not empty %}
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-2">N°</th>
+                                <th class="px-4 py-2">Date</th>
+                                <th class="px-4 py-2">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for facture in client.factures %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2"><a href="{{path('facture.show', {id: facture.id})}}">{{ facture.numero }}</a></td>
+                                    <td class="px-4 py-2">{{ facture.dateEmission|date('d/m/Y') }}</td>
+                                    <td class="px-4 py-2">{{ facture.montantTTC|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-gray-400 px-6 py-4">Aucune facture pour ce client.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Colonne Devis #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-800">Devis</h4>
+            </div>
+            <div>
+                {% if client.devis is not empty %}
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-2">N°</th>
+                                <th class="px-4 py-2">Date</th>
+                                <th class="px-4 py-2">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for devis in client.devis %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2"><a href=" {{ path('devis.show', {id: devis.id})}}">{{ devis.numero }}</a></td>
+                                    <td class="px-4 py-2">{{ devis.dateEmission|date('d/m/Y') }}</td>
+                                    <td class="px-4 py-2">{{ devis.montantTTC|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-gray-400 px-6 py-4">Aucun devis pour ce client.</p>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
-    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-2">
-        <a href=" {{ path('client.index') }}" class="px-2.5 py-1.5 bg-green-600 mx-auto text-white text-xs font-medium rounded-md hover:bg-green-700">Back</a>
+
+    <div class="flex justify-center">  <a href="{{ path('client.index') }}"
+       class="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded transition">Back</a>
     </div>
+    
 </div>
+
 
 {% endblock %}

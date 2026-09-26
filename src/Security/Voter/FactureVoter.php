@@ -11,15 +11,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class FactureVoter extends Voter
 {
-    public const EDIT = 'POST_EDIT';
-    public const VIEW = 'POST_VIEW';
-     public const DELETE = 'POST_DELETE';
+    public const LIST = 'INVOICE_LIST';
+    public const CREATE = 'INVOICE_CREATE';
+    public const EDIT = 'INVOICE_EDIT';
+    public const VIEW = 'INVOICE_VIEW';
+    public const DELETE = 'INVOICE_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE], true)
+        return in_array($attribute, [self::LIST, self::CREATE]) || 
+        in_array($attribute,  [self::EDIT, self::VIEW, self::DELETE])
             && $subject instanceof \App\Entity\Facture;
     }
 
@@ -39,15 +42,15 @@ final class FactureVoter extends Voter
          /** @var Facture $facture */
         $facture = $subject;
 
-        if ($facture->getClient()->getUser() !== $user) {
-            return false;
-        }
-
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) 
                 return true;
+
+             if ($facture->getClient()->getUser() !== $user) {
+            return false;
+        }
         
        return match ($attribute) {
-            self::VIEW => true,
+            self::LIST, self::CREATE, self::VIEW => true,
             self::EDIT, self::DELETE => $facture->isEditable(),
             default => false,
         };

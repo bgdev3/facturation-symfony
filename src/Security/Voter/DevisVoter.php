@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DevisVoter extends Voter
 {
+    public const LIST = 'DEVIS_LIST';
+    public const CREATE = 'DEVIS_CREATE';
     public const EDIT = 'DEVIS_EDIT';
     public const VIEW = 'DEVIS_VIEW';
     public const DELETE= 'DEVIS_DELETE';
@@ -19,7 +21,9 @@ final class DevisVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE], true)
+     
+        return in_array($attribute, [self::LIST, self::CREATE]) ||
+         in_array($attribute,[self::EDIT, self::VIEW, self::DELETE] )
             && $subject instanceof \App\Entity\Devis;
     }
 
@@ -48,7 +52,7 @@ final class DevisVoter extends Voter
             return false;
 
         return match ($attribute) {
-            self::VIEW => true,
+            self::LIST, self::CREATE, self::VIEW =>true,
             self::EDIT, self::DELETE => $devis->isEditable(),
             default => false,
         };

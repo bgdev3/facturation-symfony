@@ -14,12 +14,13 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/client', name: 'client.')]
+#[IsGranted('ROLE_ADMIN')]
 final class ClientController extends AbstractController
 {
     #[Route('/', name: 'index')]
     public function index(Request $request, ClientRepository $repo): Response
     {
-        // $clients = $repo->findBy(['user' => $this->getUser()]);
+        
         $page = $request->query->getInt('page', 1);
         $clients = $repo->paginationClient($page);
         return $this->render('client/index.html.twig', ['clients' => $clients]);
