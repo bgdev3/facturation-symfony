@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Enum\DevisStatut;
-use App\Enum\FactureStatut;
 use App\Repository\DevisRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -261,11 +260,11 @@ class Devis
 
      public function isEditable(): bool
     {
-        return $this->statut == FactureStatut::Brouillon;
+        return $this->statut == DevisStatut::Brouillon;
     }
 
     public function isDeletable(): bool
     {
-        return $this->statut === FactureStatut::Brouillon;
+        return $this->statut === DevisStatut::Brouillon;
     }
 }

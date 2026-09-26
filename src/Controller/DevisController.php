@@ -21,6 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/devis', name:'devis.')]
+ #[IsGranted('DEVIS_LIST')]
 final class DevisController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
@@ -38,6 +39,7 @@ final class DevisController extends AbstractController
     }
 
     #[Route('/new', name: 'create', methods: ['GET', 'POST'])]
+     #[IsGranted('DEVIS_CREATE')]
     public function create(Request $request, EntityManagerInterface $entityManager, NumberGenerator $numberoGenerator ): Response
     {
         $devis = new Devis();

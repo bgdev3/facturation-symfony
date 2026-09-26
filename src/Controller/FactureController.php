@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
 #[Route('/facture', name: 'facture.')]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('INVOICE_LIST')]
 final class FactureController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
@@ -37,6 +37,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    #[IsGranted('INVOICE_CREATE')]
     public function new(Request $request, EntityManagerInterface $entityManager, NumberGenerator $number): Response
     {
         $facture = new Facture();
@@ -58,7 +59,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    #[IsGranted('POST_VIEW', 'facture')]
+    #[IsGranted('INVOICE_VIEW', 'facture')]
     public function show(Facture $facture): Response
     {
         $paiement = new Paiement();
@@ -73,7 +74,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    #[IsGranted('POST_EDIT', 'facture')]
+    #[IsGranted('INVOICE_EDIT', 'facture')]
     public function edit(Request $request, Facture $facture, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(FactureType::class, $facture);
@@ -96,7 +97,7 @@ final class FactureController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
-    #[IsGranted('POST_DELETE', 'facture')]
+    #[IsGranted('INVOICE_DELETE', 'facture')]
     public function delete(Request $request, Facture $facture, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$facture->getId(), $request->getPayload()->getString('_token'))) {
@@ -112,7 +113,6 @@ final class FactureController extends AbstractController
         ]);
     }
         }
-
         return $this->redirectToRoute('facture.index', [], Response::HTTP_SEE_OTHER);
     }
 }
