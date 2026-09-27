@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Facture;
 use App\Entity\User;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -62,6 +63,18 @@ class FactureRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findFacturesEnRetard(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.dateEcheance < :now')
+            ->andWhere('f.statut != :statutPayee')
+            ->setParameter(':now', new \DateTime())
+            ->setParameter(':statutPayee', 'payee')
+            ->orderBy('f.dateEcheance', 'ASC')
+            ->getQuery()
+            ->getResult();
+            }
     //    /**
     //     * @return Facture[] Returns an array of Facture objects
     //     */

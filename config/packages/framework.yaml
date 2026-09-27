@@ -1,9 +1,12 @@
-# see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        cookie_lifetime: 604800      # durée du cookie navigateur : 1 semaine
+        gc_maxlifetime: 604800       # durée de vie côté serveur : 1 semaine
+        cookie_secure: auto          # cookie sécurisé auto en HTTPS
+        cookie_samesite: lax
 
     #esi: true
     #fragments: true

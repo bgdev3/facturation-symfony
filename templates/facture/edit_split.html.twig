@@ -92,7 +92,6 @@
 
     {# Aperçu (75%) #}
     <div class="w-full lg:w-3/4 bg-white p-4 rounded-lg shadow-md overflow-auto max-h-[calc(100vh-200px)]">
-      <h2 class="text-lg font-semibold mb-3 text-gray-700">Aperçu</h2>
       <turbo-frame id="facture_preview" class="block">
         {{ include('facture/preview.html.twig', { facture: facture }) }}
       </turbo-frame>
