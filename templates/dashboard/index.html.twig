@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DAshboardController!{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto mt-8 px-4">
+
+    <h2 class="text-2xl text-center font-bold text-gray-800 mb-5">Tableau de bord</h2>
+
+    {# KPI Cards #}
+    <div class="grid grid-cols-2 gap-4 mb-8">
+        {# CA du mois #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">CA du mois</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ caduMois|number_format(0, ',', ' ') }} €</p>
+                </div>
+                <div class="bg-green-100 text-green-600 rounded-full p-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        {# Factures impayées #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Factures impayées</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ nbFacturesImpayees }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ montantImpaye|number_format(0, ',', ' ') }} € en attente</p>
+                </div>
+                <div class="bg-red-100 text-red-600 rounded-full p-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        {# Devis en attente #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Devis en attente</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ nbDevisEnAttente }}</p>
+                </div>
+                <div class="bg-yellow-100 text-yellow-600 rounded-full p-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        {# Factures en retard #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Factures en retard</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ nbFacturesEnRetard }}</p>
+                </div>
+                <div class="bg-orange-100 text-orange-600 rounded-full p-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {# 2 colonnes : Factures récentes / Devis récents #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {# Factures récentes #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200 flex justify-between items-center">
+                <h4 class="text-lg font-semibold text-gray-800">Factures récentes</h4>
+                <a href="{{ path('facture.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Voir tout</a>
+            </div>
+            <div>
+                {% if facturesRecentes is not empty %}
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-2">N°</th>
+                                <th class="px-4 py-2">Client</th>
+                                <th class="px-4 py-2">Montant</th>
+                                <th class="px-4 py-2">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for facture in facturesRecentes %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">
+                                        <a href="{{ path('facture.show', {id: facture.id}) }}" class="text-blue-600 hover:underline">
+                                            {{ facture.numero }}
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-2">{{ facture.client.name }}</td>
+                                    <td class="px-4 py-2">{{ facture.montantTTC|number_format(2, ',', ' ') }} €</td>
+                                    <td class="px-4 py-2">
+                                        <span class="inline-block px-2 py-1 text-xs font-medium rounded-full
+                                            {{ facture.statut.value == 'payee' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                            {{ facture.statut.value }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-gray-400 px-6 py-4">Aucune facture récente.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Devis récents #}
+        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200 flex justify-between items-center">
+                <h4 class="text-lg font-semibold text-gray-800">Devis récents</h4>
+                <a href="{{ path('devis.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Voir tout</a>
+            </div>
+            <div>
+                {% if devisRecents is not empty %}
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-2">N°</th>
+                                <th class="px-4 py-2">Client</th>
+                                <th class="px-4 py-2">Montant</th>
+                                <th class="px-4 py-2">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for devis in devisRecents %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">
+                                        <a href="{{ path('devis.show', {id: devis.id}) }}" class="text-blue-600 hover:underline">
+                                            {{ devis.numero }}
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-2">{{ devis.client.name }}</td>
+                                    <td class="px-4 py-2">{{ devis.montantTTC|number_format(2, ',', ' ') }} €</td>
+                                    <td class="px-4 py-2">
+                                        <span class="inline-block px-2 py-1 text-xs font-medium rounded-full
+                                            {{ devis.statut.value == 'accepte' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                                            {{ devis.statut.value }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-gray-400 px-6 py-4">Aucun devis récent.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

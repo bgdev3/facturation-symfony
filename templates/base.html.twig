@@ -32,20 +32,20 @@
 
                     {# Liens de navigation #}
                     <div class="hidden md:flex items-center gap-6">
-                        <a href=""
-                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                        <a href=" {{ path('dashboard') }}"
+                        class="font-medium transition-colors {{ app.current_route starts with 'dashboard' ? 'text-blue-600' : 'text-black-700 hover:text-blue-600' }}">
                             Dashboard
                         </a>
                         <a href=" {{ path('client.index') }} "
-                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                        class="font-medium transition-colors {{ app.current_route starts with 'client.' ? 'text-blue-600' : 'text-black-700 hover:text-blue-600' }}">
                             Clients
                         </a>
                         <a href=" {{ path('devis.index') }} "
-                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                        class=" font-medium transition-colors {{ app.current_route starts with 'devis.' ? 'text-blue-600' : 'text-black-700 hover:text-blue-600' }}">
                             Devis
                         </a> 
                         <a href=" {{ path('facture.index') }}"
-                        class="text-black-700 hover:text-blue-600 font-medium transition-colors">
+                        class="font-medium transition-colors {{ app.current_route starts with 'facture.' ? 'text-blue-600' : 'text-black-700 hover:text-blue-600' }}">
                             Factures
                         </a>
                     </div>
