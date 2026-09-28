@@ -52,7 +52,7 @@ symfony server:start
 
 ## Tests
 
-Quelques tests unitaires et fonctionnels couvrent les points les plus sensibles (numérotation, verrouillage des factures émises). La couverture n'est pas exhaustive sur l'ensemble du projet.
+Quelques tests unitaires et fonctionnels couvrent les points les plus sensibles (devis, factures). La couverture n'est pas exhaustive sur l'ensemble du projet.
 
 ```bash
 php bin/console --env=test doctrine:database:create
