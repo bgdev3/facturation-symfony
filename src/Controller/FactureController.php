@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
@@ -130,5 +131,36 @@ final class FactureController extends AbstractController
         }
 
         return $this->render('facture.index');
+    }
+
+    #[Route('/export/csv', name: 'export_csv', methods: ['GET'])]
+    public function exportCsv(FactureRepository $factures): Response
+    {
+        $response = new StreamedResponse(function () use ($factures) {
+            $handle = fopen('php://output', 'w+');
+            
+            //Utile uniquement pour Excel, les autres editeurs lisent utf-8 correctement
+            fwrite($handle, "\xEF\xBB\xBF");  // le BOM, avant tout le reste
+            fputcsv($handle, ['Numéro', 'Date émission', 'Client', 'Montant HT', 'TVA', 'Montant TTC', 'Statut'], ';');
+
+            foreach ($factures->findAll() as $facture) {
+                fputcsv($handle, [
+                    $facture->getNumero(),
+                    $facture->getDateEmission()?->format('d/m/Y'),
+                    $facture->getClient()->getName(),
+                    $facture->getMontantHt(),
+                    $facture->getMontantTva(),
+                    $facture->getMontantTtc(),
+                    $facture->getStatut()->value,
+                ], ';');
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="factures.csv"');
+
+        return $response;
     }
 }
