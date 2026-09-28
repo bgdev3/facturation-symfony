@@ -81,6 +81,12 @@ class Facture
     #[ORM\OneToMany(targetEntity: Paiement::class, mappedBy: 'facture')]
     private Collection $paiements;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $dernierRelanceAt = null;
+
+    #[ORM\Column]
+    private ?int $nombreRelance = null;
+
     public function __construct()
     {
         $this->ligneFactures = new ArrayCollection();
@@ -300,12 +306,42 @@ class Facture
 
     public function isEditable(): bool
     {
-        return $this->statut == FactureStatut::Brouillon;
+        return $this->statut === FactureStatut::Brouillon;
     }
 
     public function isDeletable(): bool
     {
         return $this->statut === FactureStatut::Brouillon;
+    }
+
+    public function getDernierRelanceAt(): ?\DateTimeImmutable
+    {
+        return $this->dernierRelanceAt;
+    }
+
+    public function setDernierRelanceAt(?\DateTimeImmutable $dernierRelanceAt): static
+    {
+        $this->dernierRelanceAt = $dernierRelanceAt;
+
+        return $this;
+    }
+
+    public function getNombreRelance(): ?int
+    {
+        return $this->nombreRelance;
+    }
+
+    public function setNombreRelance(int $nombreRelance): static
+    {
+        $this->nombreRelance = $nombreRelance;
+
+        return $this;
+    }
+
+    public function isRelancable(): bool{
+        
+    return $this->statut === FactureStatut::Envoyee 
+        && $this->dateEcheance < new \DateTimeImmutable();
     }
 
 }

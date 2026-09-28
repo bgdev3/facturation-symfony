@@ -28,6 +28,8 @@ Application de facturation en Symfony — gestion clients, devis, factures avec 
 
 ## Installation
 
+> **Note** : seuls les services annexes (PDF, base de données, mail) sont dockerisés. L'application Symfony elle-même tourne en local.
+
 ```bash
 git clone https://github.com/bgdev3/facturation-symfony.git
 cd facturation-symfony

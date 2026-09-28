@@ -9,7 +9,7 @@ final class DashboardControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/d/ashboard');
+        $client->request('GET', '/dashboard');
 
         self::assertResponseIsSuccessful();
     }
