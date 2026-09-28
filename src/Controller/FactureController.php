@@ -9,6 +9,7 @@ use App\Form\FactureType;
 use App\Form\PaiementType;
 use App\Repository\FactureRepository;
 use App\Services\NumberGenerator;
+use App\Services\RelanceFactureService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -106,13 +107,28 @@ final class FactureController extends AbstractController
             $entityManager->remove($facture);
             $entityManager->flush();
 
-             if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
+            if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
                 return $this->render('facture/delete_stream.html.twig', [
                     'id' => $facture_id,
-        ]);
-    }
+                ]);
+            }
+
+            $this->addFlash('success', 'La facture N°' . $facture->getNumero(). ' a bien été supprimée.');
         }
         return $this->redirectToRoute('facture.index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/relancer', name: 'relancer', methods: ['POST'])]
+    #[IsGranted('INVOICE_RELANCE', 'facture')]
+    public function relancer(Request $request, Facture $facture, RelanceFactureService $relance): Response
+    {
+        if($this->isCsrfTokenValid('relance'.$facture->getId(), $request->getPayload()->getString('_token'))) {
+
+            $relance->relancer($facture);
+            $this->addFlash('success', 'Relance envoyée à ' . $facture->getClient()->getEmail());
+        }
+
+        return $this->render('facture.index');
     }
 }

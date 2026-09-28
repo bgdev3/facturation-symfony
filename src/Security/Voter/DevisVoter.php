@@ -7,7 +7,6 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DevisVoter extends Voter
 {
@@ -31,13 +30,25 @@ final class DevisVoter extends Voter
     {
         $user = $token->getUser();
 
-        if(!$user instanceof User)
-            return false;
-
         // Si l'utilisateur n'est pas connu, accès interdit
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             $vote?->addReason('The user must be logged in to access this resource.');
 
+            return false;
+        }
+
+      
+
+        /** @var Devis $devis */
+        $devis = $subject;
+
+        if ($attribute === self::EDIT && !$devis->isEditable()) {
+            $vote?->addReason('Un devis émis ne peut plus être modifé');
+            return false;
+        }
+
+         if ($attribute === self::DELETE && !$devis->isDeletable()) {
+            $vote?->addReason('Un devis émis ne peut plus être supprimé');
             return false;
         }
 
@@ -45,15 +56,13 @@ final class DevisVoter extends Voter
             return true;
         }
 
-        /** @var Devis $devis */
-        $devis = $subject;
-
         if ($devis->getClient()->getUser() !== $user)
             return false;
 
         return match ($attribute) {
             self::LIST, self::CREATE, self::VIEW =>true,
-            self::EDIT, self::DELETE => $devis->isEditable(),
+            self::EDIT => $devis->isEditable(),
+            self::DELETE => $devis->isDeletable(),
             default => false,
         };
 
