@@ -11,7 +11,7 @@
   }
 
   .accordion-content.active {
-    max-height: 1000px;
+    max-height: none;
     visibility: visible;
     opacity: 1;
   }
@@ -22,11 +22,11 @@
 {% block body %}
   <h1 class="text-2xl text-center font-bold mb-4">Édition du devis {{ devis.numero }}</h1>
 
-  <div class="flex flex-col-2 lg:flex-row gap-4">
+  <div class="flex flex-col-2 lg:flex-row gap-4 items-start">
     <div class="w-full lg:w-1/4 bg-gray-50 p-2 rounded-lg border" data-controller="accordion">
     {{ form_start(form, { attr: { 'data-turbo-frame': 'devis_preview' } }) }}
 
-    <div class="space-y-1">
+    <div class="space-y-1 flex-1 ">
       {# Section 1 : Infos générales #}
       <div class="border-b border-gray-200">
         <div class="accordion-toggle flex justify-between items-center p-2 hover:bg-gray-100"
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <div class="p-2 flex justify-between">
+    <div class="p-2 flex justify-between gap-2">
      <button type="submit" class="w-1/2 cursor-pointer bg-yellow-300 text-dark font-bold py-1 px-2 rounded text-xs hover:bg-yellow-500">Appliquer au preview</button>
      <!-- data-turbo-frame permet de sorti de Turbo afin que la redirection se fasse -->
       <button type="submit" name="action" value="save" data-turbo-frame="_top" class="w-1/2 cursor-pointer bg-green-300 text-dark font-bold py-1 px-2 rounded text-xs hover:bg-green-500">Valider le devis</button>

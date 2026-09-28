@@ -42,6 +42,9 @@ class ClientType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
+                'attr' => [
+                    'class' => "px-2.5 py-1.5 text-center bg-green-600 rounded-md text-dark hover:bg-green-100 transition-colors"
+                ]
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->factory->attachedTimestamp());
         ;
