@@ -5,7 +5,7 @@ Application de gestion de facturation pour indépendants et petites structures �
 ## Stack
 
 - **Backend** : Symfony 8.1, PHP 8.4+
-- **Base de données** : PostgreSQL / Doctrine ORM
+- **Base de données** : SQL / Doctrine ORM
 - **PDF** : Gotenberg (Docker)
 - **Mail (dev)** : Mailpit (Docker)
 - **CSS** : Tailwind CSS (via AssetMapper)
