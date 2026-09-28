@@ -27,8 +27,8 @@ Application de gestion de facturation pour indépendants et petites structures �
 
 Ce projet ne se limite pas à un CRUD : plusieurs règles de gestion et de conformité ont guidé les choix techniques.
 
-- **Numérotation séquentielle sans trou** : une facture émise ne peut plus être ni modifiée, ni supprimée. Toute correction passe par un avoir.
-- **Statuts distincts brouillon / émise**, contrôlés à la fois côté entité (`isEditable()`, `isDeletable()`) et côté autorisation (Voters), pour garantir la règle même en cas d'appel direct hors contrôleur.
+- **Numérotation séquentielle sans trou** : une facture émise ne peut plus être ni modifiée, ni supprimée.
+- **Statuts distincts brouillon / envoyée**, contrôlés à la fois côté entité (`isEditable()`, `isDeletable()`) et côté autorisation (Voters), pour garantir la règle même en cas d'appel direct hors contrôleur.
 - **Mentions légales obligatoires** intégrées aux documents générés (pénalités de retard, indemnité forfaitaire de recouvrement).
 
 ## Installation
