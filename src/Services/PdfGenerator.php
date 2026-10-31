@@ -9,6 +9,9 @@ final class PdfGenerator
 {
     public function __construct(private readonly GotenbergPdfInterface $gotenberg){}
   
+    /**
+     * @param array<string, mixed> $context.
+     */
     public function generate(string $template, array $context): Response
     {
         return $this->gotenberg->html()
@@ -18,10 +21,12 @@ final class PdfGenerator
         ;
     }
 
-    // Pourpièce jointe, contenu brut, pas de flux de sortie
+     /**
+     * @param array<string, mixed> $context.
+     */
     public function generateContent(string $template, array $context): string
     {
-        return $this->gotenberg->html()
+        return (string) $this->gotenberg->html()
             ->content($template, $context)
             ->processor(new InMemoryProcessor())
             ->generate()

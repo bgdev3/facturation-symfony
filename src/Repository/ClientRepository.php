@@ -18,6 +18,9 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    /**
+     * @return PaginationInterface<int, client>
+     */
     public function paginationClient(?int $page): PaginationInterface
     {
         $builder =  $this->createQueryBuilder('p')->select('p');

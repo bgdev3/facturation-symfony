@@ -23,7 +23,8 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
 
             $client = new Client();
             $client->setName($faker->company)
-            ->setSiret($faker->siret)
+            /** @phpstan-ignore-next-line */
+            ->setSiret($faker->siret())
             ->setAddress($faker->streetAddress)
             ->setPostalCode($faker->postcode)
             ->setCity($faker->city)

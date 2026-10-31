@@ -8,6 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Devis>
+ */
 final class DevisVoter extends Voter
 {
     public const LIST = 'DEVIS_LIST';

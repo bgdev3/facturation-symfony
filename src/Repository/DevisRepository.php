@@ -18,6 +18,9 @@ class DevisRepository extends ServiceEntityRepository
         parent::__construct($registry, Devis::class);
     }
 
+     /**
+     * @return PaginationInterface<int, Devis>
+     */
      public function paginationQuotation(?int $page, ?int $userId): PaginationInterface
     {
         $builder = $this->createQueryBuilder('d')

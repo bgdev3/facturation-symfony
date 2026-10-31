@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Facture;
 use App\Entity\Paiement;
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Enum\PaiementStatus;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +33,7 @@ class PaiementControllerTest extends WebTestCase
         $facture->setMontantHT('100.00');
         $facture->setMontantTVA('20.00');
         $facture->setMontantTTC('120.00');
-        $facture->setConditionsPaiement('30 jours');
+        $facture->setConditionsPaiement(ConditionsStatus::Comptant);
 
         $this->em->persist($facture);
         $this->em->flush();

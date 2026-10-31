@@ -13,6 +13,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use phpDocumentor\Reflection\Types\Null_;
 
 class FactureFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -58,8 +59,8 @@ class FactureFixtures extends Fixture implements DependentFixtureInterface
 
                 $ligne = new LigneFacture();
                 $ligne->setDesignation($faker->sentence())
-                    ->setQuantite($quantite)
-                    ->setPrixUnitaireHT($prixUnitaire)
+                    ->setQuantite((string)$quantite)
+                    ->setPrixUnitaireHT((string)$prixUnitaire)
                     ->setTauxTVA((string) $tauxTVA)
                     ->setFacture($facture);
 

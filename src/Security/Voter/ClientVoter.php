@@ -3,11 +3,15 @@
 namespace App\Security\Voter;
 
 use App\Entity\User;
+use App\Entity\Client;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @extends Voter<string, Client>
+ */
 final class ClientVoter extends Voter
 {
     public const EDIT = 'EDIT';

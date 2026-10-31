@@ -8,6 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Facture>
+ */
 final class FactureVoter extends Voter
 {
     public const LIST = 'INVOICE_LIST';
