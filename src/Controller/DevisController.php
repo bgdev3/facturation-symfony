@@ -9,6 +9,7 @@ use App\Event\DevisAccepteEvent;
 use App\Event\DevisSendEvent;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
+use App\Services\DevisAgentService;
 use App\Services\NumberGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -25,8 +26,10 @@ use Symfony\UX\Turbo\TurboBundle;
 final class DevisController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, DevisRepository $repo, Security $security): Response
+    public function index(Request $request, DevisRepository $repo, DevisAgentService $agent): Response
     {
+        $resultat = null;
+
         /** @var User $user */
         $user = $this->getUser();
         $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
@@ -35,7 +38,15 @@ final class DevisController extends AbstractController
             $request->query->getInt('page', 1), 
             $isAdmin ? null : $user->getId() );
 
-        return $this->render('devis/index.html.twig', ['devis' => $devis]);
+        // Introduit l'agent 
+        if ($request->isMethod('POST') && $this->isCsrfTokenValid('devis_agent', $request->request->get('_token'))) {
+            $demande = trim((string) $request->request->get('demande'));
+            if ($demande !== '') {
+                $resultat = $agent->ask($demande, $user->getCompany());
+            }
+        }
+
+        return $this->render('devis/index.html.twig', ['devis' => $devis, 'resultat' => $resultat]);
     }
 
     #[Route('/new', name: 'create', methods: ['GET', 'POST'])]

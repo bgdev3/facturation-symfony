@@ -44,8 +44,8 @@ class DevisFixtures extends Fixture implements DependentFixtureInterface
 
                 $ligne = new LigneDevis();
                 $ligne->setDesignation($faker->sentence())
-                ->setQuantite($quantite)
-                ->setPrixUnitaireHT($prixUnitaire)
+                ->setQuantite((string)$quantite)
+                ->setPrixUnitaireHT((string)$prixUnitaire)
                 ->setTauxTVA((string) $tauxTVA)
                 ->setDevis($devis);
 

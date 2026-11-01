@@ -20,6 +20,9 @@ class FactureRepository extends ServiceEntityRepository
         parent::__construct($registry, Facture::class);
     }
 
+     /**
+     * @return PaginationInterface<int, Facture>
+     */
     public function paginationInvoice(?int $page, ?int $userId): PaginationInterface
     {
         $builder = $this->createQueryBuilder('f')
@@ -54,6 +57,9 @@ class FactureRepository extends ServiceEntityRepository
                 ->getOneOrNullResult();
     }
     
+     /**
+     * @return array <User>
+     */
     public function findByUser(User $user): array
     {
         return $this->createQueryBuilder('f')
@@ -64,6 +70,9 @@ class FactureRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+     /**
+     * @return array <Facture>
+     */
     public function findFacturesEnRetard(): array
     {
         return $this->createQueryBuilder('f')

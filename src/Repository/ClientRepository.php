@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Client;
+use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -18,6 +19,9 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    /**
+     * @return PaginationInterface<int, client>
+     */
     public function paginationClient(?int $page): PaginationInterface
     {
         $builder =  $this->createQueryBuilder('p')->select('p');
@@ -30,6 +34,21 @@ class ClientRepository extends ServiceEntityRepository
                     'sortFieldAllowList' => ['r.id', 'r.title'],
                 ]
         );
+    }
+
+    /**
+     * @return Client[]
+     */
+    public function searchByName(string $nom, Company $company): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.company = :company')
+            ->andWhere('LOWER(c.nom) LIKE :nom')
+            ->setParameter('company', $company)
+            ->setParameter('nom', '%' . mb_strtolower($nom) . '%')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
     }
     //    /**
     //     * @return Client[] Returns an array of Client objects

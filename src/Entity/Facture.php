@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
-use App\Enum\PaiementStatus;
 use App\Repository\FactureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -84,7 +83,7 @@ class Facture
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dernierRelanceAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $nombreRelance = null;
 
     public function __construct()
@@ -286,7 +285,7 @@ class Facture
 
     public function getResteAPayer(): float
     {
-        return $this->getMontantTTC() - $this->getTotalPaye();
+        return (float) $this->getMontantTTC()  - (float) $this->getTotalPaye();
     }
 
       public function recalculerTotaux(): void

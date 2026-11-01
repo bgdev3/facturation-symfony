@@ -21,6 +21,10 @@ class NumberGenerator
         return $this->genererProchainNumero(Facture::class, 'FAC');
     }
 
+    /**
+    * @template T of object
+    * @param class-string<T> $entityClass
+    */
     private function genererProchainNumero(string $entityClass, string $prefixe): string
     {
         $year = date('Y');

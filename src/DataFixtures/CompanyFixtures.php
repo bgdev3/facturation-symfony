@@ -18,7 +18,8 @@ class CompanyFixtures extends Fixture
         $siren = substr($company->getSiret(), 0, 9);
       
         $company->setName($faker->company)
-            ->setSiret($faker->siret) // 14 chiffres, Luhn valide
+         /** @phpstan-ignore-next-line */
+            ->setSiret($faker->siret()) // 14 chiffres, Luhn valide
             ->setAddress($faker->streetAddress)
             ->setPostalCode($faker->postcode)
             ->setCity($faker->city)

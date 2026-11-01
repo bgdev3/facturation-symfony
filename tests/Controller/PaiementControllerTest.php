@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Facture;
 use App\Entity\Paiement;
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use App\Enum\PaiementStatus;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +33,7 @@ class PaiementControllerTest extends WebTestCase
         $facture->setMontantHT('100.00');
         $facture->setMontantTVA('20.00');
         $facture->setMontantTTC('120.00');
-        $facture->setConditionsPaiement('30 jours');
+        $facture->setConditionsPaiement(ConditionsStatus::Comptant);
 
         $this->em->persist($facture);
         $this->em->flush();
@@ -66,28 +67,28 @@ class PaiementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/facture/'.$facture->getId());
     }
 
-public function testDeletePaiementRedirectsToFactureShow(): void
-{
-    $facture = $this->em->getRepository(Facture::class)->findOneBy([]);
+    public function testDeletePaiementRedirectsToFactureShow(): void
+    {
+        $facture = $this->em->getRepository(Facture::class)->findOneBy([]);
 
-    if (!$facture) {
-        $this->markTestSkipped('Aucune facture en base pour le test.');
+        if (!$facture) {
+            $this->markTestSkipped('Aucune facture en base pour le test.');
+        }
+
+        $paiement = new Paiement();
+        $paiement->setFacture($facture);
+        $paiement->setMontant('100.00');
+        $paiement->setDate(new \DateTimeImmutable());
+        $paiement->setMoyen(PaiementStatus::Virement);
+
+
+        $this->em->persist($paiement);
+        $this->em->flush();
+
+        $factureId = $paiement->getFacture()->getId();
+
+        $this->client->request('POST', '/paiement/'.$paiement->getId().'/delete');
+
+        $this->assertResponseRedirects('/facture/'.$factureId);
     }
-
-    $paiement = new Paiement();
-    $paiement->setFacture($facture);
-    $paiement->setMontant('100.00');
-    $paiement->setDate(new \DateTimeImmutable());
-    $paiement->setMoyen(PaiementStatus::Virement);
-
-
-    $this->em->persist($paiement);
-    $this->em->flush();
-
-    $factureId = $paiement->getFacture()->getId();
-
-    $this->client->request('POST', '/paiement/'.$paiement->getId().'/delete');
-
-    $this->assertResponseRedirects('/facture/'.$factureId);
-}
 }

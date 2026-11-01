@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\User;
 use App\Form\ClientType;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +31,12 @@ final class ClientController extends AbstractController
     public function create(Request $request, EntityManagerInterface $em): Response
     {
         $client = new Client();
-        $client->setUser($this->getUser());
+
+        $user = $this->getUser();
+        if(!$user instanceof User) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour créer un client.');
+        }
+        $client->setUser($user);
 
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);

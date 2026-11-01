@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Facture;
+use App\Enum\ConditionsStatus;
 use App\Enum\FactureStatut;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -73,7 +74,7 @@ final class FactureControllerTest extends WebTestCase
         $fixture->setMontantHT('100.00');
         $fixture->setMontantTVA('20.00');
         $fixture->setMontantTTC('120.00');
-        $fixture->setConditionsPaiement('30 jours');
+        $fixture->setConditionsPaiement(ConditionsStatus::Comptant);
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -94,7 +95,7 @@ final class FactureControllerTest extends WebTestCase
         $fixture->setMontantHT('100.00');
         $fixture->setMontantTVA('20.00');
         $fixture->setMontantTTC('120.00');
-        $fixture->setConditionsPaiement('30 jours');
+        $fixture->setConditionsPaiement(ConditionsStatus::Comptant);
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -137,7 +138,7 @@ final class FactureControllerTest extends WebTestCase
         $fixture->setMontantHT('100.00');
         $fixture->setMontantTVA('20.00');
         $fixture->setMontantTTC('120.00');
-        $fixture->setConditionsPaiement('30 jours');
+        $fixture->setConditionsPaiement(ConditionsStatus::Comptant);
 
         $this->manager->persist($fixture);
         $this->manager->flush();
