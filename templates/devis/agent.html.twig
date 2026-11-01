@@ -1,0 +1,18 @@
+{# templates/devis/agent.html.twig #}
+<form method="post" class="space-y-3">
+    <input type="hidden" name="_token" value="{{ csrf_token('devis_agent') }}">
+    <textarea name="demande" rows="3" class="w-full border rounded p-2"
+        placeholder="Ex : devis pour Dupont, 3 jours de développement à 450 € et 1 hébergement annuel à 120 €"></textarea>
+    <button class="bg-blue-600 text-white px-4 py-2 rounded">Envoyer</button>
+</form>
+
+{% if resultat %}
+    <div class="mt-4 p-4 border rounded">
+        <p>{{ resultat.reponse|nl2br }}</p>
+        {% if resultat.devisId %}
+            <a href="{{ path('app_devis_edit', {id: resultat.devisId}) }}" class="text-blue-600 underline">
+                Ouvrir le brouillon pour relecture
+            </a>
+        {% endif %}
+    </div>
+{% endif %}

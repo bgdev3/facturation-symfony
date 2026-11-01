@@ -67,28 +67,28 @@ class PaiementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/facture/'.$facture->getId());
     }
 
-public function testDeletePaiementRedirectsToFactureShow(): void
-{
-    $facture = $this->em->getRepository(Facture::class)->findOneBy([]);
+    public function testDeletePaiementRedirectsToFactureShow(): void
+    {
+        $facture = $this->em->getRepository(Facture::class)->findOneBy([]);
 
-    if (!$facture) {
-        $this->markTestSkipped('Aucune facture en base pour le test.');
+        if (!$facture) {
+            $this->markTestSkipped('Aucune facture en base pour le test.');
+        }
+
+        $paiement = new Paiement();
+        $paiement->setFacture($facture);
+        $paiement->setMontant('100.00');
+        $paiement->setDate(new \DateTimeImmutable());
+        $paiement->setMoyen(PaiementStatus::Virement);
+
+
+        $this->em->persist($paiement);
+        $this->em->flush();
+
+        $factureId = $paiement->getFacture()->getId();
+
+        $this->client->request('POST', '/paiement/'.$paiement->getId().'/delete');
+
+        $this->assertResponseRedirects('/facture/'.$factureId);
     }
-
-    $paiement = new Paiement();
-    $paiement->setFacture($facture);
-    $paiement->setMontant('100.00');
-    $paiement->setDate(new \DateTimeImmutable());
-    $paiement->setMoyen(PaiementStatus::Virement);
-
-
-    $this->em->persist($paiement);
-    $this->em->flush();
-
-    $factureId = $paiement->getFacture()->getId();
-
-    $this->client->request('POST', '/paiement/'.$paiement->getId().'/delete');
-
-    $this->assertResponseRedirects('/facture/'.$factureId);
-}
 }
